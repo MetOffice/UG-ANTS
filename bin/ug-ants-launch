@@ -1,0 +1,97 @@
+#!/bin/bash -l
+#
+# Usage ug-ants-launch CMD_WITHOPTS
+#
+# This is a convenience script intended for use at sites where ug-ants and
+# scitools are available via module load commands. Where such central
+# provisioning is available the expected usage for most users is to want to
+# use the UG_ANTS_MODULE to load in an ants module. The SCITOOLS_MODULE and
+# options is provided for those wishing to deploy their own
+# ANTS builds. A PYTHONPATH_PREPEND variable is used to extend the pythonpath
+# after loading in the appropriate module(s).
+#
+#
+# ENVIRONMENT
+#   UG_ANTS_MODULE         The version of ants you want to run. If set, this will
+#                       take precedence over loading scitools and um_tools.
+#   SCITOOLS_MODULE     The version of the software stack you want to run. Will
+#                       not be used if UG_ANTS_MODULE is set.
+#   PYTHONPATH_PREPEND  Path to a library you want to prepend to PYTHONPATH
+#   PATH_PREPEND        Path you want to prepend to PATH
+#   ULIMIT_SETTING      Specify a value you want to be passed to ulimit -s.
+#                       Typically set to unlimited for tasks using spiral
+#                       search.
+#
+#   QUIET_MODE          Use this when you don't want confirmation messages
+#                       being printed to stdout, for example when running an
+#                       eval script
+#
+# OPTIONS
+#   CMD_WITHOPTS        The command you want to invoke with options
+set -eu
+
+safe_load(){
+    PRE_LOAD_LIST=$(module -t list 2>&1)
+    module load "${1}"
+    POST_LOAD_LIST=$(module -t list 2>&1)
+
+    # Check module count to determine whether module load was successful.
+    if [[ $PRE_LOAD_LIST == $POST_LOAD_LIST ]]; then
+        echo "[ERROR] Failed to load: ${1}"
+        exit 1
+    fi
+}
+
+# Ensure numpy and dask play nicely together
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export VECLIB_MAXIMUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
+export PYTHONNOUSERSITE=true
+
+# Check that either UG_ANTS_MODULE or SCITOOLS_MODULE have been specified. If
+# neither is set then exit with an error.
+if [[ -z ${UG_ANTS_MODULE:-} && -z ${SCITOOLS_MODULE:-} ]]; then
+    echo "[ERROR] Need to set either UG_ANTS_MODULE or SCITOOLS_MODULE"
+    exit 1
+fi
+
+# Load UG-ANTS module if UG_ANTS_MODULE specified
+if [[ ! -z ${UG_ANTS_MODULE:-} ]]; then
+    safe_load $UG_ANTS_MODULE
+else
+    safe_load $SCITOOLS_MODULE
+fi
+
+# If it has been set then prepend PYTHONPATH_PREPEND to PYTHONPATH to extend the
+# python environment.
+if [[ ! -z ${PYTHONPATH_PREPEND:-} ]]; then
+    if [[ -z ${QUIET_MODE:-} ]]; then
+        echo "[INFO] Prepending the following to PYTHONPATH:" $PYTHONPATH_PREPEND
+    fi
+    export PYTHONPATH=$PYTHONPATH_PREPEND:${PYTHONPATH:-}
+fi
+
+# If it has been set then prepend PATH_PREPEND to PATH to extend the environment.
+if [[ ! -z ${PATH_PREPEND:-} ]]; then
+    if [[ -z ${QUIET_MODE:-} ]]; then
+        echo "[INFO] Prepending the following to PATH:" $PATH_PREPEND
+    fi
+    export PATH=$PATH_PREPEND:${PATH:-}
+fi
+
+if [[ -z ${QUIET_MODE:-} ]]; then
+    # Report ANTS and Iris loaded and print version info - this is useful for
+    # debugging which builds of ANTS and Iris have been sourced. The ants-version
+    # script can be extended to debug additional dependencies.
+    ug-ants-version
+    echo "[OK] Modules loaded."
+fi
+
+if [[ ! -z ${ULIMIT_SETTING:-} ]]; then
+    ulimit -s $ULIMIT_SETTING
+fi
+
+exec "$@"
