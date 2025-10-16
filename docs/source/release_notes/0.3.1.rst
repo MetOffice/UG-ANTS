@@ -1,0 +1,14 @@
+****************************
+UG-ANTS 0.3.1 (October 2025)
+****************************
+
+This is a bugfix release to address issues with the handling of vertical levels
+in the :doc:`/applications/ugrid_to_XIOS` application.
+
+Bugs Fixed
+==========
+- :ticket:`2743` Fixed a bug in :doc:`/applications/ugrid_to_XIOS` caused by
+  :func:`ugants.io.xios_command_line.reorder_cube_dimensions` in which dimension
+  ordering would be incorrect for a file with multiple vertical coordinates
+  (e.g. ``model_level_number`` and ``level_height``). This would also have
+  affected files with multiple time coordinates.
