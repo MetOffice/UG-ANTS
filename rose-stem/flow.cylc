@@ -73,7 +73,8 @@
 
 {# If no group is set then the workflow will abort running and print out the available groups #}
 {%- set grouplist = groups | sort | join("\n - ") -%}
-{{ assert(RUN_NAMES is defined, '--group must be defined for this workflow. \nAvailable groups are:\n - ' + grouplist) }}
+{{ assert(group is defined, 'group must be defined for this workflow: use -z group=<group>. \nAvailable groups are:\n - ' + grouplist) }}
+{%- set RUN_NAMES = group -%}
 
 {# If an unknown group is requested abort launch #}
 {%- for name in RUN_NAMES %}
@@ -145,7 +146,7 @@ module unload {{ UG_ANTS_MODULE }}
                       fi
                       """
         [[[environment]]]
-            HOST_SOURCE_UG_ANTS_BASE = {{ HOST_SOURCE_ANCIL_UGANTS_BASE }}
+            HOST_SOURCE_UG_ANTS_BASE = {{ CYLC_WORKFLOW_SRC_DIR ~ "/.." }}
 
     # ##################################
     # Build Documentation

@@ -36,8 +36,8 @@ can be used to bootstrap a set of KGO files to protect against future changes.
 To do this, run the rose stem suite::
 
   $ cd <working copy>
-  $ rose stem --group=all --workflow-name=generate_KGOs
-  $ cylc play generate_KGOs
+  $ cylc vip ./rose-stem -z group=all
+
 
 The rose stem tasks in the suite will fail, since there are no KGOs yet.  Wait
 for the suite to complete, and then run::

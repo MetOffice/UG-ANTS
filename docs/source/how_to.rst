@@ -12,3 +12,4 @@ How to guides
 
    how_to/sources_how_to.rst
    how_to/KGO_how_to.rst
+   how_to/rose_stem_how_to.rst
