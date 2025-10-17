@@ -17,5 +17,5 @@ Contribute Code
 All contributions to UG-ANTS are made via merges with the ``main``
 branch of `UG-ANTS <https://github.com/MetOffice/UG-ANTS>`_, or with the ``trunk`` branch of `ancil/ug-contrib <https://code.metoffice.gov.uk/trac/ancil/browser/ug-contrib>`_.
 
-New contributors to UG-ANTS (*either or both of the ants and contrib repositories*) should complete the :ref:`Contributor Licence Agreement (CLA) <CLA>`, convert the completed form to PDF format, and send it to miao@metoffice.gov.uk.
+New contributors to UG-ANTS (*either or both of the UG-ANTS and UG-Contrib repositories*) should complete the :ref:`Contributor Licence Agreement (CLA) <CLA>`, convert the completed form to PDF format, and send it to miao@metoffice.gov.uk.
 
