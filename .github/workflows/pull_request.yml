@@ -1,0 +1,11 @@
+name: Pull Request
+run-name: Pull Request ${{github.event.pull_request.number}}
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    run-tests:
+        name: Run tests
+        uses: ./.github/workflows/pytest.yml

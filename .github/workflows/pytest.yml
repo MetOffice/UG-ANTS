@@ -1,0 +1,22 @@
+name: Run pytest
+on:
+    workflow_call:
+
+jobs:
+    hello-world:
+        name: Hello world
+        runs-on: ubuntu-latest
+        steps:
+            - id: checkout
+              name: Checkout
+              uses: actions/checkout@v4
+            - id: setup_environment
+              name: Setup Python environment
+              uses: mamba-org/setup-micromamba@v2
+              with:
+                environment-file: environment.yml
+                environment-name: pytest-env
+                cache-environment: true
+            - id: run
+              name: Run pytest
+              run: pytest
