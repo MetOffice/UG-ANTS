@@ -4,8 +4,8 @@ on:
     workflow_dispatch:
 
 jobs:
-    hello-world:
-        name: Hello world
+    run-pytest:
+        name: Run pytest
         runs-on: ubuntu-latest
         steps:
             - id: checkout
@@ -20,4 +20,4 @@ jobs:
                 cache-environment: true
             - id: run
               name: Run pytest
-              run: pytest
+              run: python -m pytest
