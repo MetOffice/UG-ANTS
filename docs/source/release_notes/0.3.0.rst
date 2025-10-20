@@ -1,0 +1,35 @@
+****************************
+UG-ANTS 0.3.0 (October 2025)
+****************************
+
+For a full list of changes see the release ticket :ticket:`2724`.
+
+Features
+========
+- :ticket:`2725` The ability to save ancillaries as single precision has been added
+  through the use of the :doc:`/applications/ugrid_to_XIOS` application.
+- :ticket:`2703` The ability to regrid multiple mesh cubes to a single mesh has been
+  added, to be consistent with grid to mesh functionality.
+
+Bugs Fixed
+==========
+- :ticket:`2491` Passing a file with 4 dimensions to the
+  :doc:`/applications/ugrid_to_XIOS` application no longer raises an error and
+  dimensions are ordered to be consistent with CF conventions and XIOS.
+
+Incompatible Changes
+====================
+- :ticket:`2589` Source data files for rose stem testing have been removed from the
+  repository and now are pointed to from a central location using the
+  ``UG_ANTS_SOURCES_DIRECTORY_DEFAULT`` environment variable.
+
+Infrastructure
+==============
+- :ticket:`2348` Warnings are now treated as errors when running the unittests.
+- :ticket:`2711` UG-ANTS rose stem test suite is no longer reliant on ``rose ana``.
+  Instead it uses direct calls to ``nccmp`` for KGO validation.
+
+Documentation
+=============
+- :ticket:`2713` Instructions have been added for pip-installing UG-ANTS into an
+  environment.

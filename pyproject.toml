@@ -1,0 +1,112 @@
+[project]
+name = "UG-ANTS"
+dynamic = ["version"]
+authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@metoffice.gov.uk"}]
+description = "Toolkit for generating ancillary files"
+readme = "README.rst"
+license = {file ="LICENSE.txt"}
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: Unix",
+]
+
+[project.urls]
+Homepage = "https://github.com/MetOffice/UG-ANTS"
+
+[build-system]
+# Minimum requirements for the build system to execute, defined by PEP 518.
+requires = ['setuptools']
+
+# Defined by PEP 517.
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools.packages.find]
+where = ["lib"]
+
+[tool.setuptools.dynamic]
+version = {attr = "ugants.__version__"}
+
+[tool.ruff]
+# Enable the pycodestyle errors and warnings (`E` and `W`), pydocstyle (`D`),
+# pyflakes (`F`) and McCabe complexity (`C`) rules.
+lint.select = ["E", "F", "D", "W", "C", "I", "N", "UP", "B", "PT", "RUF", "A"]
+lint.ignore = ["PT011"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+lint.fixable = ["ALL"]
+lint.unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+target-version = "py310"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore missing docstrings in empty __init__.py files:
+"__init__.py" = ["D100", "D104"]
+# Relax docstring standards for test files:
+"./lib/ugants/tests/**/test*py" = ["D100", "D101", "D102", "D103", "D104"]
+# Disable ruff rules that conflict with sphinx headings.
+"./bin/*py" = ["D205", "D400"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.mccabe]
+# Flag errors (`C901`) whenever the complexity level exceeds 6.
+# This number may be raised in future - 10 seems to be the "standard".
+max-complexity = 6
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["data_C*", "mesh_C*", "test_*"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    'error',
+    # #2409 - Deprecation warning from esmpy - fixed in later versions.
+    'ignore:Implicit None on return values is deprecated and will raise KeyErrors.:DeprecationWarning:esmpy',
+    # TODO: #2294 for understanding and handling this iris 3 warning:
+    'ignore:Ignoring a datum in netCDF load for consistency with existing behaviour:FutureWarning',
+    # Ignore the provisional warning given by ugants within unittests.
+    'ignore:The results output by UG-ANTS are provisional and subject to change.::ugants',
+    # Other warnings - iris:
+    # Warning for saving without 'iris.FUTURE.save_split_attrs = True' being set.
+    'ignore:Saving to netcdf with legacy-style attribute handling for backwards compatibility.',
+    # Warnings for not having bounds on cubes.
+    "ignore:Coordinate 'longitude' is not bounded, guessing contiguous bounds.::iris",
+    "ignore:Coordinate 'latitude' is not bounded, guessing contiguous bounds.::iris",
+    # If cubes have different history in a cubelist they are added as a data attribute rather than global.
+    "ignore:'history' is being added as CF data variable attribute, but 'history' should only be a CF global attribute.::iris",
+    'ignore:numpy.ndarray size changed, may indicate binary incompatibility. Expected 16 from C header, got 96 from PyObject:RuntimeWarning'
+
+]
