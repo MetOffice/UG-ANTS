@@ -76,6 +76,10 @@ autodoc_default_options = {
 # added by javascript).
 linkcheck_anchors_ignore_for_url = ("https://semver.org/",)
 
+# Set linkcheck to ignore certain URLs
+# - Ignore UG-ANTS on GitHub while it is private
+linkcheck_ignore = [r"https://github.com/MetOffice/UG-ANTS.*"]
+
 # Napoleon config
 napoleon_include_init_with_doc = True
 napoleon_include_special_with_doc = True
