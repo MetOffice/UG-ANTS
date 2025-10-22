@@ -1,4 +1,4 @@
-name: Run pytest
+name: Pytest
 on:
     workflow_call:
 
