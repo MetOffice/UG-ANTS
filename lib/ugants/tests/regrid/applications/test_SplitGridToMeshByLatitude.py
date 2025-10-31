@@ -491,8 +491,9 @@ class TestSaveCalls:
         app.run()
         app.output = OUTPUT_PATH
 
-        expected_call = app.mesh_mapping_cube, os.path.join(
-            OUTPUT_PATH, "mesh_band_mapping.nc"
+        expected_call = (
+            app.mesh_mapping_cube,
+            os.path.join(OUTPUT_PATH, "mesh_band_mapping.nc"),
         )
 
         with patch(self.ugrid_save_target) as mock_ugrid_save:

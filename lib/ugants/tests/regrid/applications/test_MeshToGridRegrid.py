@@ -443,9 +443,12 @@ class TestSave:
         del app.results.attributes["history"]
         assert "history" not in app.results.attributes
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             app.save()
             actual = _get_netcdf_global_attribute(temp_output_file, "history")
 
@@ -456,9 +459,12 @@ class TestSave:
         reference_date = "1970-01-01"
         expected = f"{reference_date}: foo bar\n{app.results.attributes['history']}"
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             app.save()
             actual = _get_netcdf_global_attribute(temp_output_file, "history")
 

@@ -8,6 +8,7 @@ Part of the installation process for UG-ANTS.
 Creates executable scripts that are callable from the command line.
 
 """
+
 import os
 from glob import glob
 

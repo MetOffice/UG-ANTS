@@ -4,6 +4,7 @@
 
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Generic support code for defining Mesh filtering objects."""
+
 import abc
 
 from iris.cube import Cube

@@ -8,6 +8,7 @@ Demonstration examples of filter classes.
 
 All built on :class:`ugants.filter.generic.UnstructuredFilterABC`.
 """
+
 import numpy as np
 from iris.cube import Cube
 

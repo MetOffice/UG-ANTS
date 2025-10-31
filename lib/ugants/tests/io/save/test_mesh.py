@@ -3,6 +3,7 @@
 # This file is part of UG-ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Tests for the :func:`ugants.io.save.ugrid` function."""
+
 import unittest.mock
 
 import netCDF4
@@ -240,9 +241,12 @@ class TestBasicSaves:
 
         testmesh = sample_mesh()
         assert "history" not in testmesh.attributes
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_mesh(testmesh, testpath)
             actual = _get_netcdf_global_attribute(testpath, "history")
 
@@ -260,9 +264,12 @@ class TestBasicSaves:
         testmesh = sample_mesh()
         testmesh.var_name = "dynamics"
         assert "history" not in testmesh.attributes
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_mesh(testmesh, testpath)
             actual = _get_netcdf_local_attribute(testpath, testmesh.var_name, "history")
 
@@ -291,9 +298,12 @@ class TestBasicSaves:
         testmesh = sample_mesh()
         testmesh.attributes["history"] = "initial history"
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_mesh(testmesh, testpath)
             actual = _get_netcdf_global_attribute(testpath, "history")
 
@@ -314,9 +324,12 @@ class TestBasicSaves:
         testmesh.var_name = "dynamics"
         testmesh.attributes["history"] = "initial history"
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_mesh(testmesh, testpath)
             actual = _get_netcdf_local_attribute(testpath, testmesh.var_name, "history")
 

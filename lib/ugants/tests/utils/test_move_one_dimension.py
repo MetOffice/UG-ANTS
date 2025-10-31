@@ -8,6 +8,7 @@ Tests for the dimension-moving utility function.
 In addition to :func:`ugants.utils.move_one_dimension`, its private support functions
 are also tested separately.
 """
+
 from unittest import mock
 
 import numpy as np

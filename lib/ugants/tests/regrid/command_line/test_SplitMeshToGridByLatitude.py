@@ -114,9 +114,10 @@ class TestSave:
         split_mesh.source_bands = ["1", "2"]
         split_mesh.target_bands = ["3", "4"]
         split_mesh.output = "baz"
-        with mock.patch(
-            "ugants.regrid.applications.iris.fileformats.netcdf.save"
-        ), mock.patch("ugants.regrid.applications.save.ugrid") as mock_ugrid:
+        with (
+            mock.patch("ugants.regrid.applications.iris.fileformats.netcdf.save"),
+            mock.patch("ugants.regrid.applications.save.ugrid") as mock_ugrid,
+        ):
             split_mesh.save()
         assert mock_ugrid.call_args_list == expected
 
@@ -134,8 +135,11 @@ class TestSave:
         split_mesh.source_bands = ["1", "2"]
         split_mesh.target_bands = ["3", "4"]
         split_mesh.output = "baz"
-        with mock.patch(
-            "ugants.regrid.applications.iris.fileformats.netcdf.save"
-        ) as mock_netcdf, mock.patch("ugants.regrid.applications.save.ugrid"):
+        with (
+            mock.patch(
+                "ugants.regrid.applications.iris.fileformats.netcdf.save"
+            ) as mock_netcdf,
+            mock.patch("ugants.regrid.applications.save.ugrid"),
+        ):
             split_mesh.save()
         assert mock_netcdf.call_args_list == expected

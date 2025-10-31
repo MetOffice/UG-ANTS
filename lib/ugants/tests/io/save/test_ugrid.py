@@ -3,6 +3,7 @@
 # This file is part of UG-ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Tests for the :func:`ugants.io.save.ugrid` function."""
+
 import unittest.mock
 
 import netCDF4
@@ -175,9 +176,12 @@ class TestBasicSaves:
 
         testcube = sample_mesh_cube()
         assert "history" not in testcube.attributes
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(testcube, testpath)
             actual = _get_netcdf_global_attribute(testpath, "history")
 
@@ -333,9 +337,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
         actual = _get_netcdf_global_attribute(testpath, "history")
 
@@ -355,9 +362,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_local_history_1 = _get_netcdf_local_attribute(
@@ -385,9 +395,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
         actual_global_history = _get_netcdf_global_attribute(testpath, "history")
 
@@ -408,9 +421,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_local_history_1 = _get_netcdf_local_attribute(
@@ -441,9 +457,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_history_1 = _get_netcdf_local_attribute(
@@ -472,9 +491,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_global_history = _get_netcdf_global_attribute(testpath, "history")
@@ -504,9 +526,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2, testcube_3])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_history_1 = _get_netcdf_local_attribute(
@@ -543,9 +568,12 @@ class TestMultipleCubes:
 
         cubes = CubeList([testcube_1, testcube_2, testcube_3])
 
-        with unittest.mock.patch(
-            "ugants.utils.cube.datetime", _MockDateTime(reference_date)
-        ), unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]):
+        with (
+            unittest.mock.patch(
+                "ugants.utils.cube.datetime", _MockDateTime(reference_date)
+            ),
+            unittest.mock.patch("ugants.utils.cube.sys.argv", ["foo", "bar"]),
+        ):
             save_ugrid(cubes, testpath)
 
         actual_global_history = _get_netcdf_global_attribute(testpath, "history")
