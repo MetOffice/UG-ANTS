@@ -1,0 +1,31 @@
+name: CI unit tests
+on:
+    pull_request:
+        branches: main
+    push:
+        branches: main
+    workflow_dispatch:
+
+# Limit concurrently running workflows for this branch
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    pytest:
+        name: Run unit tests
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup python environment
+              uses: mamba-org/setup-micromamba@v2
+              with:
+                environment-file: environment.yml
+                environment-name: ci-env
+                cache-environment: true
+
+            - name: Run pytest
+              run: pytest -v
+              shell: micromamba-shell {0}
+
