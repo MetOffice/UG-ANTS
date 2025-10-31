@@ -26,7 +26,7 @@ You accept and agree to the following terms and conditions for Your past, presen
 
    “Met Office” shall mean the Met Office, an Executive Agency of the Department for Business, Energy & Industrial Strategy of the United Kingdom of Great Britain and Northern Ireland (“BEIS”), whose principal place of business is situated at FitzRoy Road, Exeter, Devon EX1 3PB, United Kingdom, for and on behalf of BEIS.
 
-   “MOSRS” shall mean the Met Office Science Repository Service. 
+   “MOSRS” shall mean the Met Office Science Repository Service.
 
    “ANTS Projects” shall mean tools made available under the ANTS name and/or logo, and published through public channels such as https://code.metoffice.gov.uk/doc/ancil/ants/latest/index.html and the ants and contrib MOSRS repositories.
 
@@ -106,4 +106,3 @@ MOSRS username: ___________________________________________
 Date:                  ___________________________________________
 
 Signature:         ___________________________________________
-
