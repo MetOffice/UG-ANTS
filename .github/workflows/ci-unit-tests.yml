@@ -21,7 +21,7 @@ jobs:
             - name: Setup python environment
               uses: mamba-org/setup-micromamba@v2
               with:
-                environment-file: environment.yml
+                environment-file: environment.lock
                 environment-name: ci-env
                 cache-environment: true
 
