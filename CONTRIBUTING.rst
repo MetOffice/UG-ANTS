@@ -23,8 +23,8 @@ New contributors to UG-ANTS (*either or both of the UG-ANTS and UG-Contrib repos
 
 UG-ANTS uses `pre-commit <https://pre-commit.com>`_ hooks.
 If you are a first-time contributor, you may need to run the following command
-once to install the relevant hooks::
+once to install ``pre-commit`` into your local git repository::
 
-    pre-commit run --all-files
+    pre-commit install
 
 You may need to activate an environment containing ``pre-commit`` before running.
