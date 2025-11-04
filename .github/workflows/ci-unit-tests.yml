@@ -2,6 +2,7 @@ name: CI unit tests
 on:
     pull_request:
         branches: main
+        types: [ready_for_review, review_requested]
     push:
         branches: main
     workflow_dispatch:
@@ -28,4 +29,3 @@ jobs:
             - name: Run pytest
               run: pytest -v
               shell: micromamba-shell {0}
-
