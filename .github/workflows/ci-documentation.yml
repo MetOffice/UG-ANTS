@@ -3,6 +3,7 @@ name: CI documentation build and deploy
 on:
     pull_request:
         branches: main
+        types: [ready_for_review, review_requested]
     push:
         branches: main
     workflow_dispatch:
@@ -16,6 +17,9 @@ jobs:
     build-docs:
         name: Build documentation with Sphinx
         runs-on: ubuntu-22.04
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}
+            cancel-in-progress: true
         steps:
             - name: Checkout
               uses: actions/checkout@v4
