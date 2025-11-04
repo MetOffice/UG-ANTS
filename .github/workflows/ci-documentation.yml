@@ -1,0 +1,32 @@
+name: CI documentation build and deploy
+
+on:
+    pull_request:
+        branches: main
+    push:
+        branches: main
+    workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+    build-docs:
+        name: Build documentation with Sphinx
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup python environment
+              uses: mamba-org/setup-micromamba@v2
+              with:
+                environment-file: environment.lock
+                environment-name: ci-env
+                cache-environment: true
+
+            - name: Sphinx build
+              run: ./build_docs.sh
+              shell: micromamba-shell {0}
