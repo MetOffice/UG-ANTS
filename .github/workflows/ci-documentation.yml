@@ -37,7 +37,7 @@ jobs:
 
     deploy-docs:
         name: Deploy built documentation to GitHub pages
-        if: ${{ github.event_name == "push" && github.ref == "main" }}
+        if: ${{ github.event_name == 'push' && github.ref == 'main' }}
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
