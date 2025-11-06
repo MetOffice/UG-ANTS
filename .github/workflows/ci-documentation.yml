@@ -41,6 +41,7 @@ jobs:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-24.04
+        needs: build-docs
         steps:
             - name: Upload Artifact
               uses: actions/upload-pages-artifact@v3
