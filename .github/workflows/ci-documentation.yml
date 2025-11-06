@@ -16,7 +16,7 @@ permissions:
 jobs:
     build-docs:
         name: Build documentation with Sphinx
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}
             cancel-in-progress: true
@@ -32,5 +32,18 @@ jobs:
                 cache-environment: true
 
             - name: Sphinx build
-              run: ./build_docs.sh
               shell: micromamba-shell {0}
+              run: ./build_docs.sh
+
+    deploy-docs:
+        name: Deploy built documentation to GitHub pages
+        if: ${{ github.event_name == "push" && github.ref == "main" }}
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Upload Artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                path: docs/build/html
