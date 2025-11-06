@@ -16,7 +16,7 @@ jobs:
             cancel-in-progress: true
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Setup python environment
               uses: mamba-org/setup-micromamba@v2
@@ -29,20 +29,23 @@ jobs:
               shell: micromamba-shell {0}
               run: ./build_docs.sh
 
+            - name: Upload pages artifact
+              uses: actions/upload-pages-artifact@v4
+              with:
+                path: docs/build/html
+
     deploy-docs:
+        name: Deploy built documentation to GitHub pages
+        if: ${{ github.event_name == 'push' && github.ref == 'main' }}
         permissions:
             contents: read
             pages: write
             id-token: write
-        name: Deploy built documentation to GitHub pages
-        if: ${{ github.event_name == 'push' && github.ref == 'main' }}
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-24.04
         needs: build-docs
         steps:
-            - name: Upload Artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                path: docs/build/html
+            - name: Deploy documentation to pages
+              uses: actions/deploy-pages@v4
