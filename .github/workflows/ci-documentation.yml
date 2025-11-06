@@ -3,7 +3,6 @@ name: CI documentation build and deploy
 on:
     pull_request:
         branches: main
-        types: [ready_for_review, review_requested]
     push:
         branches: main
     workflow_dispatch:
