@@ -11,6 +11,9 @@ jobs:
     build-docs:
         name: Build documentation with Sphinx
         runs-on: ubuntu-24.04
+        # Limit concurrently running workflow for a specific pull request.
+        # Cancel and resubmit if a new push is made. See GitHub docs:
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}
             cancel-in-progress: true
