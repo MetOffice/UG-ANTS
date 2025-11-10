@@ -28,5 +28,5 @@ jobs:
                 cache-environment: true
 
             - name: Run pytest
-              run: pytest -v
+              run: pytest --verbose
               shell: micromamba-shell {0}
