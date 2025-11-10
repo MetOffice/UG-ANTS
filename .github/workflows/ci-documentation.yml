@@ -36,6 +36,8 @@ jobs:
 
     deploy-docs:
         name: Deploy built documentation to GitHub pages
+        # Only run deploy-docs job on push to main, see GitHub docs:
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-jobs-with-conditions
         if: ${{ github.event_name == 'push' && github.ref == 'main' }}
         permissions:
             contents: read
