@@ -24,6 +24,11 @@ See LICENSE.txt in the root of the repository for full licensing details.
 
 .. _contact:
 
+Support
+-------
+
+UG-ANTS is only supported for Linux.
+
 Contact
 -------
 Met Office, FitzRoy Road, Exeter, Devon, EX1 3PB, United Kingdom
