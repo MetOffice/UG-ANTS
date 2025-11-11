@@ -5,7 +5,9 @@ authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@me
 description = "Toolkit for generating ancillary files on UGrid unstructured meshes."
 readme = "README.rst"
 license = {file ="LICENSE.txt"}
-requires-python = ">=3.7"
+# Updates to `requires-python` should have a corresponding update to the
+# `environment.yml` file:
+requires-python = "==3.10.13"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",

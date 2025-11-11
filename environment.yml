@@ -30,6 +30,8 @@ dependencies:
   - pytest-cov
   - pytest-xdist
   - python-stratify
+# Updates to python version should have a corresponding update to the
+# `pyproject.yml` file:
   - python=3.10.13
   - ruff
   - sphinx
