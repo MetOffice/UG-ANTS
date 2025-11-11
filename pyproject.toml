@@ -4,7 +4,8 @@ dynamic = ["version"]
 authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@metoffice.gov.uk"}]
 description = "Toolkit for generating ancillary files on UGrid unstructured meshes."
 readme = "README.rst"
-license = {file ="LICENSE.txt"}
+license-expression = "BSD-3-Clause"
+license-file = "LICENSE.txt"
 # Updates to `requires-python` should have a corresponding update to the
 # `environment.yml` file:
 requires-python = "==3.10.13"
