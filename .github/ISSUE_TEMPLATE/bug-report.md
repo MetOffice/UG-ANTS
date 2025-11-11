@@ -13,12 +13,9 @@ Step by step guide to reproduce the behaviour:
 2.
 3.
 
-## Environment
-I am using the UG-ANTS x.y.z/developer/other(specify) <!-- Please delete as appropriate-->
-environment.
-
 ## Version
 This bug exists in UG-ANTS x.y.z/head of main <!-- Please delete as appropriate-->
 
 ## Additional Context
 <!-- Please add all other details and context here -->
+<!-- For example, details of a site deployed environment -->
