@@ -2,7 +2,7 @@
 name = "UG-ANTS"
 dynamic = ["version"]
 authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@metoffice.gov.uk"}]
-description = "Toolkit for generating ancillary files"
+description = "Toolkit for generating ancillary files on UGrid unstructured meshes."
 readme = "README.rst"
 license = {file ="LICENSE.txt"}
 requires-python = ">=3.7"
