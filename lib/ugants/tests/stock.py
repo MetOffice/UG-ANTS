@@ -329,7 +329,12 @@ def four_vertical_levels_cube():
     """
     cube = mesh_cube(number_of_levels=4)
     cube.rename("vertical_cube")
-    model_level_number_coord = DimCoord([1, 2, 3, 4], "model_level_number", units="1")
+
+    vertical_attributes = {"positive": "up"}
+
+    model_level_number_coord = DimCoord(
+        [1, 2, 3, 4], "model_level_number", units="1", attributes=vertical_attributes
+    )
     cube.remove_coord(cube.coord("level"))
     cube.add_dim_coord(model_level_number_coord, 0)
 
@@ -338,6 +343,7 @@ def four_vertical_levels_cube():
         bounds=[[0.0, 3.0], [3.0, 6.0], [6.0, 12.0], [12.0, 20.0]],
         var_name="level_height",
         units="m",
+        attributes=vertical_attributes,
     )
     cube.add_aux_coord(level_height_coord, 0)
 
