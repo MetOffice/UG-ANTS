@@ -1,6 +1,6 @@
 # (C) Crown Copyright, Met Office. All rights reserved.
 #
-# This file is part of UG-ANTS and is released under the BSD 3-Clause license.
+# This file is part of ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Helper functions for unit tests.
 
@@ -132,6 +132,48 @@ def regular_lat_lon_mesh(
     )
 
     return mesh
+
+
+def regular_lat_lon_mesh_cube(
+    data=None,
+    min_lon: float = 0.0,
+    max_lon: float = +180.0,
+    min_lat: float = 0.0,
+    max_lat: float = +90.0,
+    shape: tuple = (20, 30),
+):
+    """Generate a cube with a mesh resembling a regular lat/lon grid.
+
+    This uses the regular_lat_lon_mesh function to generate the mesh.
+    Data can be provided via the data argument, if not provided then data is
+    generated via numpy.ma.arange.
+
+    Parameters
+    ----------
+    data : np.ma.array
+        A 1D numpy array of length n_lon x n_lat
+    min_lon : float
+        Start longitude, by default 0.0
+    max_lon : float
+        End longitude, by default +180.0
+    min_lat : float
+        Start latitude, by default 0.0
+    max_lat : float
+        End latitude, by default +90.0
+    shape : tuple
+        Resolution of the mesh (lonxlat), by default (20, 30)
+    """
+    mesh = regular_lat_lon_mesh(min_lon, max_lon, min_lat, max_lat, shape)
+    mesh_coord_x, mesh_coord_y = mesh.to_MeshCoords("face")
+    if data is None:
+        data = np.ma.arange(shape[0] * shape[1])
+        data.mask = np.ma.getmaskarray(data)
+    cube = Cube(
+        data,
+        long_name="synthetic_data",
+        aux_coords_and_dims=[(mesh_coord_x, 0), (mesh_coord_y, 0)],
+    )
+    return cube
 
 
 def regular_grid_global_cube(n_lat: int, n_lon: int):
@@ -287,12 +329,7 @@ def four_vertical_levels_cube():
     """
     cube = mesh_cube(number_of_levels=4)
     cube.rename("vertical_cube")
-
-    vertical_attributes = {"positive": "up"}
-
-    model_level_number_coord = DimCoord(
-        [1, 2, 3, 4], "model_level_number", units="1", attributes=vertical_attributes
-    )
+    model_level_number_coord = DimCoord([1, 2, 3, 4], "model_level_number", units="1")
     cube.remove_coord(cube.coord("level"))
     cube.add_dim_coord(model_level_number_coord, 0)
 
@@ -301,7 +338,6 @@ def four_vertical_levels_cube():
         bounds=[[0.0, 3.0], [3.0, 6.0], [6.0, 12.0], [12.0, 20.0]],
         var_name="level_height",
         units="m",
-        attributes=vertical_attributes,
     )
     cube.add_aux_coord(level_height_coord, 0)
 

@@ -1,6 +1,6 @@
 # (C) Crown Copyright, Met Office. All rights reserved.
 #
-# This file is part of UG-ANTS and is released under the BSD 3-Clause license.
+# This file is part of ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Tests for the :class:`ugants.analysis.fill.FillABC` class."""
 
@@ -346,7 +346,7 @@ class TestInit:
                 DummyConcreteFill(sample_data)
             except AttributeError:
                 pass
-        mock_method.assert_called_once_with()
+        mock_method.assert_called_once_with(sample_data, None)
 
     def test_identify_valid_fill_cells_call(self, sample_data):
         with mock.patch(
@@ -360,4 +360,4 @@ class TestInit:
                 DummyConcreteFill(sample_data)
             except AttributeError:
                 pass
-        mock_method.assert_called_once_with()
+        mock_method.assert_called_once_with(sample_data, None)

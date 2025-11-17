@@ -1,12 +1,12 @@
 # (C) Crown Copyright, Met Office. All rights reserved.
 #
-# This file is part of UG-ANTS and is released under the BSD 3-Clause license.
+# This file is part of ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
 from unittest import mock
 
 import numpy as np
 import pytest
-from ugants.analysis.command_line import FillMissingPoints, KDTreeFill
+from ugants.analysis.command_line import FillMissingPoints
 from ugants.io import load
 from ugants.tests import get_data_path
 from ugants.utils.cube import as_cubelist
@@ -37,6 +37,7 @@ def target_mask_cubelist(source_cubelist):
     source_cube = source_cubelist[0]
     target_mask = source_cube.copy(np.zeros(source_cube.shape, dtype=int))
     target_mask.data[0] = 1
+    target_mask.rename("target_mask")
     return as_cubelist(target_mask)
 
 
@@ -104,15 +105,10 @@ class TestNoTargetMask:
             "filling.:UserWarning:ugants.analysis"
         ),
     )
-    def test_kdtreefill_call(self, default_app, source_cubelist):
-        with mock.patch.object(KDTreeFill, "__call__") as mock_kdtreefill_call:
+    def test_fill_call(self, default_app, source_cubelist):
+        with mock.patch("ugants.analysis.command_line.fill_cube") as mock_fill:
             default_app.run()
-        mock_kdtreefill_call.assert_called_once_with(source_cubelist[0])
-
-    def test_multi_source_fail(self, sample_cubelist):
-        app = FillMissingPoints(sample_cubelist)
-        with pytest.raises(ValueError, match="Expecting one cube, found 2"):
-            app.run()
+        mock_fill.assert_called_once_with(source_cubelist[0], None)
 
 
 class TestTargetMask:
@@ -142,17 +138,11 @@ class TestTargetMask:
             "filling.:UserWarning:ugants.analysis"
         ),
     )
-    def test_kdtreefill_call(self, default_app, source_cubelist):
-        with mock.patch.object(KDTreeFill, "__call__") as mock_kdtreefill_call:
+    def test_fill_call(self, default_app, source_cubelist, target_mask_cubelist):
+        with mock.patch("ugants.analysis.command_line.fill_cube") as mock_fill:
             default_app.run()
-        mock_kdtreefill_call.assert_called_once_with(source_cubelist[0])
-
-    def test_multi_source_fail(self, sample_cubelist, target_mask_cubelist):
-        app = FillMissingPoints(sample_cubelist, target_mask_cubelist)
-        with pytest.raises(ValueError, match="Expecting one cube, found 2"):
-            app.run()
+        mock_fill.assert_called_once_with(source_cubelist[0], target_mask_cubelist[0])
 
     def test_multi_target_mask_fail(self, source_cubelist, sample_cubelist):
-        app = FillMissingPoints(source_cubelist, sample_cubelist)
-        with pytest.raises(ValueError, match="Expecting one cube, found 2"):
-            app.run()
+        with pytest.raises(ValueError, match="Expecting one target mask, found 2"):
+            FillMissingPoints(source_cubelist, sample_cubelist)
