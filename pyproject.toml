@@ -2,7 +2,7 @@
 name = "UG-ANTS"
 dynamic = ["version"]
 authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@metoffice.gov.uk"}]
-description = "Toolkit for generating ancillary files on UGrid unstructured meshes."
+description = "A Python library for generating LFRic ancillary files, developed at the Met Office."
 readme = "README.rst"
 license = {file ="LICENSE.txt"}
 # Updates to `requires-python` should have a corresponding update to the
