@@ -19,16 +19,13 @@ Homepage = "https://github.com/MetOffice/UG-ANTS"
 
 [build-system]
 # Minimum requirements for the build system to execute, defined by PEP 518.
-requires = ['setuptools']
+requires = ["setuptools>=80", "setuptools-scm[simple]>=8"]
 
 # Defined by PEP 517.
 build-backend = 'setuptools.build_meta'
 
 [tool.setuptools.packages.find]
 where = ["lib"]
-
-[tool.setuptools.dynamic]
-version = {attr = "ugants.__version__"}
 
 [tool.ruff]
 # Enable the pycodestyle errors and warnings (`E` and `W`), pydocstyle (`D`),
