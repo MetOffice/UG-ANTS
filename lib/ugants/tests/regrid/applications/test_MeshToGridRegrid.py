@@ -455,9 +455,10 @@ class TestSave:
         assert actual == expected
 
     def test_append_history_attribute_on_disk(self, app, temp_output_file):
-        assert "history" in app.results.attributes
+        """Test that history is prepended to a pre-existing history attribute."""
+        app.results.attributes["history"] = "old_history"
         reference_date = "1970-01-01"
-        expected = f"{reference_date}: foo bar\n{app.results.attributes['history']}"
+        expected = f"{reference_date}: foo bar\nold_history"
 
         with (
             unittest.mock.patch(
