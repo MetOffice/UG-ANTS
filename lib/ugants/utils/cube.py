@@ -11,7 +11,9 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
+import dask
 import iris.cube
+import numpy as np
 
 from ugants.exceptions import PROVISIONAL_WARNING_MESSAGE, ProvisionalWarning
 
@@ -341,3 +343,54 @@ class Stencil:
             neighbourhood |= new_faces
 
         return list(neighbourhood)
+
+
+def align_mask(cube_input):
+    """
+    Adjust a cube's mask so that it is of the same shape as the associated data.
+
+    Tests the input to see if it should be handled as a cube or cubelist and
+    uses ```_fix_cube_mask(cube)``` to carry out the work of adjusting the mask(s).
+
+    Parameters
+    ----------
+    cube_input : :class:`iris.cube.Cube` or :class:`iris.cube.CubeList`
+
+    Returns
+    -------
+    : None
+        In-place operation.
+
+    """
+    if isinstance(cube_input, iris.cube.CubeList):
+        for cube in cube_input:
+            _expand_cube_mask(cube)
+    else:
+        _expand_cube_mask(cube_input)
+
+
+def _expand_cube_mask(cube):
+    """
+    If the input cube has no mask, this routine returns an mask array of
+    False values that matches the shape of the input core data array.
+    It is designed to address cases where a single False numpy boolean
+    is being returned as a mask rather than a data sized array of False
+    values. It maintains unrealised data if input is lazy.
+    """ #noqa 205
+    lazy = cube.has_lazy_data()
+    cube_core_data = cube.core_data()
+    if lazy:
+        mask_values = dask.array.ma.getmaskarray(cube_core_data)
+    else:
+        mask_values = np.ma.getmask(cube_core_data)
+
+    if cube_core_data.shape != mask_values.shape:
+        if lazy:
+            cube.data = dask.array.ma.masked_array(
+                cube_core_data, mask=np.zeros(cube_core_data.shape, dtype=bool)
+            )
+        else:
+            cube.data = np.ma.masked_array(
+                cube_core_data, mask=np.zeros(cube_core_data.shape, dtype=bool)
+            )
+    return
