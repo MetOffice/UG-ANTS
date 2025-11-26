@@ -13,7 +13,8 @@ try:
 except PackageNotFoundError as exc:
     warnings.warn(
         f"{exc}. Unknown UG-ANTS version. "
-        "Consider installing UG-ANTS into your environment.",
+        "Consider installing UG-ANTS into your environment. See the installation "
+        "instructions in the documentation for more details.",
         stacklevel=0,
     )
     __version__ = "unknown"
