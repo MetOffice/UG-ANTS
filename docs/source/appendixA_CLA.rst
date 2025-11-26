@@ -24,7 +24,7 @@ You accept and agree to the following terms and conditions for Your past, presen
 
    "Contribution" shall mean any original work of authorship, including any modifications or additions to an existing work, that is intentionally submitted by You to the ANTS Projects. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to ANTS Projects or the Met Office or their representatives or members, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, ANTS Projects for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by You as "Not a Contribution".
 
-   “Met Office” shall mean the Met Office, an Executive Agency of the Department for Business, Energy & Industrial Strategy of the United Kingdom of Great Britain and Northern Ireland (“BEIS”), whose principal place of business is situated at FitzRoy Road, Exeter, Devon EX1 3PB, United Kingdom, for and on behalf of BEIS.
+   "Met Office" shall mean the Met Office, an Executive Agency of the Department for Science, Innovation and Technology of the United Kingdom of Great Britain and Northern Ireland ("DSIT"), whose principal place of business is situated at FitzRoy Road, Exeter, Devon EX1 3PB, United Kingdom, for and on behalf of DSIT.
 
    “MOSRS” shall mean the Met Office Science Repository Service.
 
