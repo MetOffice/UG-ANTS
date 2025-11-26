@@ -29,6 +29,7 @@ jobs:
 
             - name: Install UG-ANTS
               run: pip install .
+              shell: micromamba-shell {0}
 
             - name: Run pytest
               run: pytest --verbose
