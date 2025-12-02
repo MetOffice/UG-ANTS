@@ -32,15 +32,19 @@ you can use the ``--no-build-isolation`` option to pip as follows::
 
     $ python -m pip install --no-build-isolation .
 
+Developer Installation
+======================
+
 For development work, you may want the most recent packages available, with only
 key packages fixed to specific versions. In that case, use the ``environment.yml``
 file to create the environment::
 
     $ conda env create -p <path/to/install/developer/environment> -f environment.yml
     $ conda activate <path/to/environment>
+    $ python -m pip install --editable .
 
 Testing the Installation
-------------------------
+========================
 
 To check UG-ANTS has been installed, activate the conda environment and run::
 
