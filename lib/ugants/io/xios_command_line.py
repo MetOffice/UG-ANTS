@@ -112,8 +112,6 @@ class ConvertToXIOS(ugants.abc.Application):
         XIOS only cares that there is a long name, not what the long name is.
         If the cube has a standard name, copy that to the long name.  If the
         cube doesn't have a standard name, it will have a long name already.
-
-        See UGANTS ticket #2254.
         """
         for cube in self.results:
             if cube.long_name is None and cube.standard_name is not None:
