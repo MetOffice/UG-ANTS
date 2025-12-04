@@ -200,10 +200,11 @@ class ConvertToXIOS(ugants.abc.Application):
         Overrides parent class to use XIOS specific save arguments:
 
         1. ``online_operation`` is defined as a local rather than global
-           attribute.  See UGANTS ticket #2255.
+           attribute.
         2. Fill value is set per-field to a value required by XIOS
            (see :meth:`get_fill_values`).
-           See UGANTS ticket #2253 and LFRic ticket #4168.
+           
+           See LFRic ticket #4168.
         3. If :attr:`cast_to_single` is :obj:`True`, then all double (64 bit) float data
            will be cast to single (32 bit) float before saving.
 
