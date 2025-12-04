@@ -124,8 +124,6 @@ class ConvertToXIOS(ugants.abc.Application):
         values, so if the user has manually set one on the cube before saving,
         it should be preserved.  Otherwise, set the online operation to
         ``once`` as a default option.
-
-        See UGANTS ticket #2255.
         """
         for cube in self.results:
             if "online_operation" not in cube.attributes:
