@@ -152,3 +152,11 @@ You accept and agree to the following terms and conditions for Your past, presen
    The Parties to this Agreement do not intend that any of its terms will be enforceable by any person not a party to it.
 
    This Agreement shall be governed by and construed in accordance with the laws of the England and Wales.
+
+Code contributors
+-----------------
+
+The following people have contributed to this code under the terms of the
+Contributor Licence Agreement:
+
+* Josh Rackham (Met Office)
