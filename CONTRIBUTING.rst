@@ -1,25 +1,53 @@
-.. highlight:: shell
+UG-ANTS: How to Contribute
+==========================
 
-=================
-How to Contribute
-=================
+Reporting Bugs
+--------------
 
-Report Bugs
-===========
+To report bugs/issues please email miao@metoffice.gov.uk and ideally open an
+associated `bug report
+<https://github.com/MetOffice/UG-ANTS/issues/new?template=bug-report.md>`_
+on GitHub as well.
 
-Report bugs and request enhancement by emailing miao@metoffice.gov.uk and
-ideally opening an issue on `UG-ANTS GitHub <https://github.com/MetOffice/UG-ANTS/issues/new>`_ as well.
-If reporting a bug, add a recipe for repeating it, along with any error messages,
-details of what version of UG-ANTS is being used etc. If requesting an enhancement
-or behaviour change, describe the use case in detail.
+To support the UG-ANTS developers in identifying the problem, please provide:
+
+* a recipe for repeating - what command/routine was called and with what
+  arguments/inputs?
+* any error message text output
+* the version of UG-ANTS being used
+* the version of the contrib code being used, if applicable
+* if making a change to core or contrib, branches checked into the repository.
+  Please provide links and revision numbers.
+
+Due to the complexity of some workflows it can be hard to understand what
+is being run/intended, so when providing a recipe for repeating your issue
+please try and provide details of the script(s) being run and the inputs and
+arguments being used beyond just a pointer to "task X in suite Y".
+
+Feature Requests
+----------------
+
+We welcome input from our users on things that could make ANTS more useful,
+easier to use, or add functionality that is missing for your desired ancillary
+generation processes. If you would like to request an enhancement or behaviour
+change please get in contact, describing the use case in detail and ideally open
+an associated `feature request
+<https://github.com/MetOffice/UG-ANTS/issues/new?template=feature-request.md>`_
+on GitHub as well.
 
 Contribute Code
-===============
+---------------
 
 All contributions to UG-ANTS are made via merges with the ``main``
-branch of `UG-ANTS <https://github.com/MetOffice/UG-ANTS>`_, or with the ``trunk`` branch of `ancil/ug-contrib <https://code.metoffice.gov.uk/trac/ancil/browser/ug-contrib>`_.
+branch of https://github.com/MetOffice/UG-ANTS.
 
-New contributors to UG-ANTS (*either or both of the UG-ANTS and UG-Contrib repositories*) should complete the :ref:`Contributor Licence Agreement (CLA) <CLA>`, convert the completed form to PDF format, and send it to miao@metoffice.gov.uk.
+New contributors to UG-ANTS must agree to the following Contributor Licence
+Agreement (CLA), and add their name and institution to the list of contributors.
+
+The CLA below supercedes the CLA that was previously used on the Met Office
+Science Repository Service (MOSRS). Contributors who have previously contributed
+code to ANTS via MOSRS must agree to the new CLA by adding their name and
+institution to the list of contributors.
 
 UG-ANTS uses `pre-commit <https://pre-commit.com>`_ hooks.
 If you are a first-time contributor, you may need to run the following command
