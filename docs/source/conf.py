@@ -90,14 +90,7 @@ napoleon_include_special_with_doc = True
 html_theme = "pydata_sphinx_theme"
 
 html_theme_options = {
-    "icon_links": [
-        {
-            "name": "Trac",
-            "url": "https://code.metoffice.gov.uk/trac/ancil",
-            "icon": "fa-solid fa-bugs",
-            "type": "fontawesome",
-        }
-    ],
+    "github_url": "https://github.com/MetOffice/UG-ANTS",
     "show_toc_level": 2,
 }
 
