@@ -4,7 +4,6 @@
 # See LICENSE.txt in the root of the repository for full licensing details.
 import re
 
-import iris
 import iris.coords
 import iris.cube
 import numpy as np
@@ -13,14 +12,12 @@ import pytest
 from ugants.regrid.band_utils import (
     split_cube,
 )
-from ugants.tests import get_data_path
+from ugants.tests.stock import regular_grid_global_cube
 
 
 @pytest.fixture()
 def non_ugrid_cube():
-    input_filepath = get_data_path("non_ugrid_data.nc")
-    cube = iris.load_cube(input_filepath)
-    return cube
+    return regular_grid_global_cube(144, 192)
 
 
 class TestSplitCube:
