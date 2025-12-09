@@ -13,6 +13,7 @@ from ugants.regrid.applications import (
     SplitMeshToGridByLatitude,
 )
 from ugants.tests import get_data_path
+from ugants.tests.stock import regular_grid_global_cube
 
 
 def _standard_regrid(source, target_grid, scheme):
@@ -54,7 +55,7 @@ class TestConsistentResults:
         sources = load.ugrid(get_data_path("data_C4.nc"), "sample_data")
         for source in sources:
             source.attributes["history"] = "foo"
-        target_grid = load.cf(get_data_path("non_ugrid_data.nc"))
+        target_grid = CubeList([regular_grid_global_cube(144, 192)])
 
         expected = _standard_regrid(sources, target_grid, scheme)
         actual = _split_regrid(sources, target_grid, scheme, n_bands=n_bands)

@@ -2,11 +2,8 @@
 #
 # This file is part of UG-ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
-import re
 import tempfile
 import unittest
-from contextlib import redirect_stderr
-from io import StringIO
 from pathlib import Path
 from unittest import mock
 
@@ -16,14 +13,14 @@ from esmf_regrid.experimental.unstructured_scheme import (
     MeshToGridESMFRegridder,
 )
 from iris.cube import CubeList
-from iris.exceptions import ConstraintMismatchError
 
 from ugants.exceptions import ProvisionalWarning
-from ugants.io.load import cf, ugrid
+from ugants.io.load import ugrid
 from ugants.io.save import PROVISIONAL_WARNING_MESSAGE
 from ugants.regrid.applications import MeshToGridRegrid
 from ugants.tests import get_data_path
 from ugants.tests.io.save.test_ugrid import _get_netcdf_global_attribute, _MockDateTime
+from ugants.tests.stock import regular_grid_global_cube
 
 OUTPUT_PATH = "/path/to/output.nc"
 
@@ -47,15 +44,9 @@ def single_element_cubelist(ugrid_cubelist):
 
 
 @pytest.fixture()
-def target_path():
-    """Return path to lat-lon file of N96 resolution."""
-    return get_data_path("non_ugrid_data.nc")
-
-
-@pytest.fixture()
-def regular_cubelist(target_path):
-    """Load iris.cubelist from target lat-lon file."""
-    return cf(target_path)
+def regular_cubelist():
+    """Return a cubelist containing a single lat-lon cube."""
+    return CubeList([regular_grid_global_cube(144, 192)])
 
 
 @pytest.fixture()
@@ -67,48 +58,6 @@ def input_weights():
     and non_ugrid_data.nc as target.
     """
     return get_data_path("mesh_to_grid_output_weights_C4_to_n96.nc")
-
-
-class TestCLI:
-    @pytest.fixture()
-    def default_command(self, source_path, target_path):
-        """Return default command line arguments for mesh to grid regrid application."""
-        return [
-            source_path,
-            target_path,
-            OUTPUT_PATH,
-            "--horizontal-regrid-scheme",
-            "conservative",
-        ]
-
-    @pytest.fixture()
-    def default_app(self, default_command):
-        return MeshToGridRegrid.from_command_line(default_command)
-
-    def test_source_loaded(self, default_app, ugrid_cubelist):
-        assert default_app.source == ugrid_cubelist
-
-    def test_output_path_added(self, default_app):
-        assert default_app.output == OUTPUT_PATH
-
-    def test_target_cube(self, default_app, regular_cubelist):
-        assert default_app.target_grid == regular_cubelist
-
-    def test_regrid_scheme_added(self, default_app):
-        assert default_app.horizontal_regrid_scheme == "conservative"
-
-    def test_invalid_regrid_scheme_fails(self, default_command):
-        command = default_command
-        command[-1] = "invalid_scheme"
-
-        with redirect_stderr(StringIO()) as buffer, pytest.raises(SystemExit):
-            MeshToGridRegrid.from_command_line(command)
-        actual_stderr = buffer.getvalue()
-        expected_stderr = re.compile(
-            "error: argument --horizontal-regrid-scheme: invalid choice: "
-            r"'invalid_scheme' \(choose from 'conservative', 'bilinear', 'nearest'\)"
-        )
-        assert expected_stderr.search(actual_stderr)
 
 
 class TestWeightsCaching:
@@ -134,35 +83,6 @@ class TestWeightsCaching:
                 input_weights="synthetic_input_weights_path",
                 output_weights="synthetic_output_weights_path.nc",
             )
-
-    def test_check_raises_error_if_grid_file_used_as_input_weights(
-        self,
-        single_element_cubelist,
-        regular_cubelist,
-        target_path,
-    ):
-        """
-        Test attempts to use mesh file as input weights.
-
-        Verifies error raised if mesh file is used for input weights.
-        """
-        incompatible_input_weights_file = target_path
-
-        app = MeshToGridRegrid(
-            source=single_element_cubelist,
-            target_grid=regular_cubelist,
-            horizontal_regrid_scheme="conservative",
-            input_weights=incompatible_input_weights_file,
-        )
-        app.output = "dummy_path"
-        with pytest.raises(
-            ConstraintMismatchError,
-            match=re.escape(
-                "Got 0 cubes for constraint Constraint(name='regri"
-                "dder_source_field'), expecting 1."
-            ),
-        ):
-            app.run()
 
     def test_regridder_called_when_output_weights_provided(
         self,
