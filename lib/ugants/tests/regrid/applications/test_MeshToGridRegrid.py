@@ -2,8 +2,11 @@
 #
 # This file is part of UG-ANTS and is released under the BSD 3-Clause license.
 # See LICENSE.txt in the root of the repository for full licensing details.
+import re
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
 from pathlib import Path
 from unittest import mock
 
@@ -44,6 +47,12 @@ def single_element_cubelist(ugrid_cubelist):
 
 
 @pytest.fixture()
+def target_path():
+    """Return path to lat-lon file of N96 resolution."""
+    return get_data_path("non_ugrid_data.nc")
+
+
+@pytest.fixture()
 def regular_cubelist():
     """Return a cubelist containing a single lat-lon cube."""
     return CubeList([regular_grid_global_cube(144, 192)])
@@ -58,6 +67,48 @@ def input_weights():
     and non_ugrid_data.nc as target.
     """
     return get_data_path("mesh_to_grid_output_weights_C4_to_n96.nc")
+
+
+class TestCLI:
+    @pytest.fixture()
+    def default_command(self, source_path, target_path):
+        """Return default command line arguments for mesh to grid regrid application."""
+        return [
+            source_path,
+            target_path,
+            OUTPUT_PATH,
+            "--horizontal-regrid-scheme",
+            "conservative",
+        ]
+
+    @pytest.fixture()
+    def default_app(self, default_command):
+        return MeshToGridRegrid.from_command_line(default_command)
+
+    def test_source_loaded(self, default_app, ugrid_cubelist):
+        assert default_app.source == ugrid_cubelist
+
+    def test_output_path_added(self, default_app):
+        assert default_app.output == OUTPUT_PATH
+
+    def test_target_cube(self, default_app):
+        assert isinstance(default_app.target_grid, CubeList)
+
+    def test_regrid_scheme_added(self, default_app):
+        assert default_app.horizontal_regrid_scheme == "conservative"
+
+    def test_invalid_regrid_scheme_fails(self, default_command):
+        command = default_command
+        command[-1] = "invalid_scheme"
+
+        with redirect_stderr(StringIO()) as buffer, pytest.raises(SystemExit):
+            MeshToGridRegrid.from_command_line(command)
+        actual_stderr = buffer.getvalue()
+        expected_stderr = re.compile(
+            "error: argument --horizontal-regrid-scheme: invalid choice: "
+            r"'invalid_scheme' \(choose from 'conservative', 'bilinear', 'nearest'\)"
+        )
+        assert expected_stderr.search(actual_stderr)
 
 
 class TestWeightsCaching:
