@@ -6,23 +6,23 @@ import iris
 import pytest
 from iris.cube import CubeList
 
-from ugants.io import load
 from ugants.regrid.command_line import (
     _validate_source_cubelist_length,
     _validate_source_is_global,
 )
-from ugants.tests import get_data_path
+from ugants.tests.stock import regular_grid_global_cube
 
 
 @pytest.fixture()
-def source_path():
-    return get_data_path("non_ugrid_data.nc")
+def sample_cubelist():
+    """Return a single-element CubeList of regular lat-lon data.
 
-
-@pytest.fixture()
-def sample_cubelist(source_path):
-    """Return a single-element CubeList of regular lat-lon data."""
-    return load.cf(source_path)
+    The cube's latitude and longitude coordinates have no bounds.
+    """
+    cube = regular_grid_global_cube(144, 192)
+    cube.coord(axis="x").bounds = None
+    cube.coord(axis="y").bounds = None
+    return CubeList([cube])
 
 
 class TestValidateSourceCubeListLength:
@@ -78,7 +78,7 @@ class TestValidateSourceIsGlobal:
 
         In this case the latitude coordinate does not have bounds.
         """
-        valid_source = sample_cubelist.extract_cube("land_area_fraction")
+        valid_source = sample_cubelist.extract_cube("sample_data")
         latitude = valid_source.coord("latitude").copy()
         latitude.guess_bounds()
         assert latitude.bounds.max() == 90
@@ -92,7 +92,7 @@ class TestValidateSourceIsGlobal:
 
         In this case the latitude coordinate has bounds.
         """
-        valid_source = sample_cubelist.extract_cube("land_area_fraction")
+        valid_source = sample_cubelist.extract_cube("sample_data")
         valid_source.coord("latitude").guess_bounds()
         assert valid_source.coord("latitude").bounds.max() == 90
         assert valid_source.coord("latitude").bounds.min() == -90
