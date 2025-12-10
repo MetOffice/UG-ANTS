@@ -286,3 +286,4 @@ The following people have contributed to this code under the terms of the
 Contributor Licence Agreement:
 
 * Josh Rackham (Met Office)
+* Andrew Clark (Met Office)
