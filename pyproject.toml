@@ -97,7 +97,7 @@ filterwarnings = [
     'error',
     # Deprecation warning from esmpy - fixed in later versions.
     'ignore:Implicit None on return values is deprecated and will raise KeyErrors.:DeprecationWarning:esmpy',
-    # TODO: https://github.com/MetOffice/ANTS/issues/68 for understanding and handling this iris 3 warning:
+    # TODO: https://github.com/MetOffice/UG-ANTS/issues/39 for understanding and handling this iris 3 warning:
     'ignore:Ignoring a datum in netCDF load for consistency with existing behaviour:FutureWarning',
     # Ignore the provisional warning given by ugants within unittests.
     'ignore:The results output by UG-ANTS are provisional and subject to change.::ugants',
