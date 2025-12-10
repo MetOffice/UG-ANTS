@@ -144,7 +144,8 @@ class SplitMeshToGridByLatitude(Application):
     """The output **directory** to which to write the :attr:`source_bands` and
     :attr:`target_bands`."""
 
-    # TODO: #2331 Replace with a central load cube when that is available.
+    # TODO: https://github.com/MetOffice/UG-ANTS/issues/43
+    #  Replace with a central load cube when that is available.
     _loader = _load_any_cubes
 
     def __init__(self, source: CubeList, target: CubeList, number_of_bands: int):
