@@ -5,4 +5,16 @@
 
 """UG-ANTS: A library for generating ancillary files targeting unstructured grids."""
 
-__version__ = "0.4.0-dev"
+import warnings
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("UG-ANTS")
+except PackageNotFoundError as exc:
+    warnings.warn(
+        f"{exc}. Unknown UG-ANTS version. "
+        "Consider installing UG-ANTS into your environment. See the installation "
+        "instructions in the documentation for more details.",
+        stacklevel=0,
+    )
+    __version__ = "unknown"

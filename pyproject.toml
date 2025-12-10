@@ -2,14 +2,16 @@
 name = "UG-ANTS"
 dynamic = ["version"]
 authors = [{name = "Model Inputs And Outputs team, Met Office", email = "miao@metoffice.gov.uk"}]
-description = "Toolkit for generating ancillary files"
+description = "A Python library for generating LFRic ancillary files, developed at the Met Office."
 readme = "README.rst"
 license = {file ="LICENSE.txt"}
-requires-python = ">=3.7"
+# Updates to `requires-python` should have a corresponding update to the
+# `environment.yml` file:
+requires-python = "==3.10.13"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",
-    "Operating System :: Unix",
+    "Operating System :: POSIX :: Linux",
 ]
 
 [project.urls]
@@ -17,16 +19,13 @@ Homepage = "https://github.com/MetOffice/UG-ANTS"
 
 [build-system]
 # Minimum requirements for the build system to execute, defined by PEP 518.
-requires = ['setuptools']
+requires = ["setuptools>=80", "setuptools-scm[simple]>=8"]
 
 # Defined by PEP 517.
 build-backend = 'setuptools.build_meta'
 
 [tool.setuptools.packages.find]
 where = ["lib"]
-
-[tool.setuptools.dynamic]
-version = {attr = "ugants.__version__"}
 
 [tool.ruff]
 # Enable the pycodestyle errors and warnings (`E` and `W`), pydocstyle (`D`),

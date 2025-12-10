@@ -23,7 +23,6 @@ Contents:
    tutorials.rst
    how_to.rst
    contributing.rst
-   appendixA_CLA.rst
    release_notes/index.rst
 
 Indices and tables
