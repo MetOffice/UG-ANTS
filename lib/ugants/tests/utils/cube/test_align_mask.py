@@ -12,7 +12,7 @@ from ugants.utils.cube import align_mask
 
 
 def test_add_missing_mask():
-    # Add mask of False values when none is present at all
+    """Add mask of False values when none is present at all."""
     n_faces = 3
     acube = mesh_cube(n_faces=n_faces)
     assert not hasattr(acube.data, "mask")
@@ -41,7 +41,7 @@ def test_expand_single_false():
 
 
 def test_no_change_falses():
-    # Do nothing - mask already ok
+    """Do nothing - mask already ok."""
     n_faces = 3
     acube = mesh_cube(n_faces=n_faces)
     assert not hasattr(acube.data, "mask")
@@ -57,7 +57,7 @@ def test_no_change_falses():
 
 
 def test_no_change_trues():
-    # Do nothing - mask already ok
+    """Do nothing - mask already ok."""
     n_faces = 3
     acube = mesh_cube(n_faces=n_faces)
     assert not hasattr(acube.data, "mask")
@@ -89,7 +89,7 @@ def test_single_element_check():
 
 
 def test_align_mask_cubelist():
-    # Do nothing - masks already ok
+    """Do nothing - masks already ok."""
     n_faces = 3
     acube = mesh_cube(n_faces=n_faces)
     bcube = mesh_cube(n_faces=n_faces)
@@ -110,7 +110,7 @@ def test_align_mask_cubelist():
 
 
 def test_add_missing_mask_cubelist():
-    # Add masks to the cubes in a cube list when none are present at all
+    """Add masks to the cubes in a cube list when none are present at all."""
     n_faces = 3
     acube = mesh_cube(n_faces=n_faces)
     bcube = mesh_cube(n_faces=n_faces)
