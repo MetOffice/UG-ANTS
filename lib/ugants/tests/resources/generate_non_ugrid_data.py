@@ -6,7 +6,9 @@ import iris.coord_systems
 import ugants.tests.stock
 import ugants.utils.cube
 
-if __name__ == "__main__":
+
+def main():
+    """Create a cube contatining synthetic data on an n96 grid."""
     cube = ugants.tests.stock.regular_grid_global_cube(144, 192)
     cube = ugants.utils.cube.prepare_for_save(cube)
     coord_system = iris.coord_systems.GeogCS(6371229.0)
@@ -15,4 +17,9 @@ if __name__ == "__main__":
     cube.attributes["source"] = (
         f"Created using ugants.tests.stock.regular_grid_global_cube at UG-ANTS v{ugants.__version__}"  # noqa: E501
     )
+    return cube
+
+
+if __name__ == "__main__":
+    cube = main()
     iris.save(cube, "non_ugrid_data.nc")
