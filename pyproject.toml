@@ -95,7 +95,7 @@ extend-ignore-names = ["data_C*", "mesh_C*", "test_*"]
 [tool.pytest.ini_options]
 filterwarnings = [
     'error',
-    # Deprecation warning from esmpy - fixed in later versions.
+    # Deprecation warning from esmpy - fixed in later versions. https://github.com/MetOffice/UG-ANTS/issues/46
     'ignore:Implicit None on return values is deprecated and will raise KeyErrors.:DeprecationWarning:esmpy',
     # TODO: https://github.com/MetOffice/UG-ANTS/issues/39 for understanding and handling this iris 3 warning:
     'ignore:Ignoring a datum in netCDF load for consistency with existing behaviour:FutureWarning',
