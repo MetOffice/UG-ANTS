@@ -377,7 +377,7 @@ def _expand_cube_mask(cube):
     It is designed to address cases where a single False numpy boolean
     is being returned as a mask rather than a data sized array of False
     values. It maintains unrealised data if input is lazy.
-    """ #noqa D205
+    """ #noqa: D205
     lazy = cube.has_lazy_data()
     cube_core_data = cube.core_data()
     if lazy:
