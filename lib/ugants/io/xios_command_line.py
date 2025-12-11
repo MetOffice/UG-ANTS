@@ -204,10 +204,10 @@ class ConvertToXIOS(ugants.abc.Application):
         Overrides parent class to use XIOS specific save arguments:
 
         1. ``online_operation`` is defined as a local rather than global
-           attribute. See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/31
+           attribute. See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/33.
         2. Fill value is set per-field to a value required by XIOS
            (see :meth:`get_fill_values`).
-           See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/33.
+           See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/31.
         3. If :attr:`cast_to_single` is :obj:`True`, then all double (64 bit) float data
            will be cast to single (32 bit) float before saving.
 
