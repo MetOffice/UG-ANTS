@@ -8,7 +8,7 @@ import ugants.utils.cube
 
 
 def main():
-    """Create a cube contatining synthetic data on an n96 grid."""
+    """Create a cube containing synthetic data on an n96 grid."""
     cube = ugants.tests.stock.regular_grid_global_cube(144, 192)
     cube = ugants.utils.cube.prepare_for_save(cube)
     coord_system = iris.coord_systems.GeogCS(6371229.0)
