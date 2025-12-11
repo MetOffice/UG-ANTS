@@ -207,7 +207,7 @@ class ConvertToXIOS(ugants.abc.Application):
            attribute. See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/31
         2. Fill value is set per-field to a value required by XIOS
            (see :meth:`get_fill_values`).
-           See LFRic ticket #4168.
+           See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/33.
         3. If :attr:`cast_to_single` is :obj:`True`, then all double (64 bit) float data
            will be cast to single (32 bit) float before saving.
 
