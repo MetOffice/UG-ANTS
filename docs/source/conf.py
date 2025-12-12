@@ -57,10 +57,6 @@ intersphinx_mapping = {
 
 # See https://www.sphinx-doc.org/en/master/usage/extensions/extlinks.html
 extlinks = {
-    "ugantsworkingpractices": (
-        "https://code.metoffice.gov.uk/trac/ancil/wiki/ANTS/WorkingPractices/%s",
-        "%s",
-    ),
     "ticket": ("https://code.metoffice.gov.uk/trac/ancil/ticket/%s", "MOSRS #%s"),
     "issue": ("https://github.com/MetOffice/UG-ANTS/issues/%s", "Issue #%s"),
     "milestone": ("https://github.com/MetOffice/UG-ANTS/milestone/%s?closed=1", None),
