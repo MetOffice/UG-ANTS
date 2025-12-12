@@ -78,8 +78,10 @@ linkcheck_anchors_ignore_for_url = ("https://semver.org/",)
 
 # Set linkcheck to ignore certain URLs
 # - Ignore UG-ANTS on GitHub while it is private
-linkcheck_ignore = [r"https://github.com/MetOffice/UG-ANTS.*",
-                    r"https://github.com/MetOffice/tcd-XIOS2-extras.*"]
+linkcheck_ignore = [
+    r"https://github.com/MetOffice/UG-ANTS.*",
+    r"https://github.com/MetOffice/tcd-XIOS2-extras.*",
+]
 
 # Napoleon config
 napoleon_include_init_with_doc = True
@@ -89,10 +91,14 @@ napoleon_include_special_with_doc = True
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
+html_last_updated_fmt = "%d %B %Y"
 
 html_theme_options = {
     "github_url": "https://github.com/MetOffice/UG-ANTS",
     "show_toc_level": 2,
+    "footer_center": [
+        "last-updated",
+    ],
 }
 
 # Make sphinx-copybutton skip all prompt characters in pygments highlighted
