@@ -2,19 +2,40 @@
 UG-ANTS 0.4.0 (December 2025)
 *****************************
 
+This release is primarily driven by migration to
+`GitHub <https://github.com/MetOffice/UG-ANTS>`_.
 For a full list of changes see the :milestone:`0.4.0 release milestone <1>`.
+
+.. important::
+  The Contributor Licence Agreement (CLA) has been updated (:pr:`40`).
+  All contributors must re-sign the CLA, see :ref:`contribute`.
 
 Features
 ========
+- :pr:`34`: The ``fix_mask`` function has been ported from ANTS to UG-ANTS as
+  :func:`ugants.utils.cube.align_mask`.
+- ``ugants.tests.stock.regular_grid_global_cube`` now has a geodetic coordinate
+  system (part of :pr:`32`).
 
 Bugs Fixed
 ==========
 
 Incompatible Changes
 ====================
+- The rose stem test workflow is now run via the ``cylc vip`` command, rather
+  than the ``rose stem`` command (part of :pr:`5`).
+  See :doc:`/how_to/rose_stem_how_to`.
 
 Infrastructure
 ==============
+- :pr:`7`: Unit tests are run with GitHub Actions as part of continuous
+  integration (CI).
+- :pr:`12` and :pr:`13`: Documentation is built with GitHub Actions as part of continuous
+  integration (CI).
+- :pr:`9`: `pre-commit <https://pre-commit.com/>`_ hooks are now supported in
+  UG-ANTS.
+- :pr:`30`: `setuptools-scm <https://setuptools-scm.readthedocs.io/en/latest/>`_
+  is now used to set the version number automatically from git metadata.
 
 Documentation
 =============
