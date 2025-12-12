@@ -346,12 +346,14 @@ class Stencil:
 
 
 def align_mask(cube_input):
-    """
+    """.. versionadded:: 0.4.0
+
     Adjust a cube's mask so that it is of the same shape as the associated data.
 
     Tests the input to see if it should be handled as a cube or cubelist and
     uses ```_expand_cube_mask(cube)``` to carry out the work of adjusting the
     mask(s).
+
 
     Parameters
     ----------
@@ -362,7 +364,7 @@ def align_mask(cube_input):
     : None
         In-place operation.
 
-    """
+    """  # noqa: D400
     if isinstance(cube_input, iris.cube.CubeList):
         for cube in cube_input:
             _expand_cube_mask(cube)
@@ -377,7 +379,7 @@ def _expand_cube_mask(cube):
     It is designed to address cases where a single False numpy boolean
     is being returned as a mask rather than a data sized array of False
     values. It maintains unrealised data if input is lazy.
-    """ #noqa: D205
+    """  # noqa: D205
     lazy = cube.has_lazy_data()
     cube_core_data = cube.core_data()
     if lazy:
