@@ -55,12 +55,15 @@ intersphinx_mapping = {
     "iris": (f"https://scitools-iris.readthedocs.io/en/v{iris_version}", None),
 }
 
+# See https://www.sphinx-doc.org/en/master/usage/extensions/extlinks.html
 extlinks = {
     "ugantsworkingpractices": (
         "https://code.metoffice.gov.uk/trac/ancil/wiki/ANTS/WorkingPractices/%s",
         "%s",
     ),
-    "ticket": ("https://code.metoffice.gov.uk/trac/ancil/ticket/%s", "#%s"),
+    "ticket": ("https://code.metoffice.gov.uk/trac/ancil/ticket/%s", "MOSRS #%s"),
+    "issue": ("https://github.com/MetOffice/UG-ANTS/issues/%s", "#%s"),
+    "milestone": ("https://github.com/MetOffice/UG-ANTS/milestone/%s?closed=1", None),
 }
 
 autodoc_default_options = {
@@ -78,8 +81,10 @@ linkcheck_anchors_ignore_for_url = ("https://semver.org/",)
 
 # Set linkcheck to ignore certain URLs
 # - Ignore UG-ANTS on GitHub while it is private
-linkcheck_ignore = [r"https://github.com/MetOffice/UG-ANTS.*",
-                    r"https://github.com/MetOffice/tcd-XIOS2-extras.*"]
+linkcheck_ignore = [
+    r"https://github.com/MetOffice/UG-ANTS.*",
+    r"https://github.com/MetOffice/tcd-XIOS2-extras.*",
+]
 
 # Napoleon config
 napoleon_include_init_with_doc = True
