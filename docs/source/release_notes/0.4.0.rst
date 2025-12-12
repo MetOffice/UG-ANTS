@@ -14,17 +14,16 @@ Features
 ========
 - :pr:`34`: The ``fix_mask`` function has been ported from ANTS to UG-ANTS as
   :func:`ugants.utils.cube.align_mask`.
-- ``ugants.tests.stock.regular_grid_global_cube`` now has a geodetic coordinate
-  system (part of :pr:`32`).
+- :pr:`32`: ``ugants.tests.stock.regular_grid_global_cube`` now has a geodetic
+  coordinate system.
 
 Bugs Fixed
 ==========
 
 Incompatible Changes
 ====================
-- The rose stem test workflow is now run via the ``cylc vip`` command, rather
-  than the ``rose stem`` command (part of :pr:`5`).
-  See :doc:`/how_to/rose_stem_how_to`.
+- :pr:`5`: The rose stem test workflow is now run via the ``cylc vip`` command,
+  rather than the ``rose stem`` command. See :doc:`/how_to/rose_stem_how_to`.
 
 Infrastructure
 ==============
