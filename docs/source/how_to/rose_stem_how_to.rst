@@ -24,7 +24,12 @@ Running
 -------
 
 To run the full workflow, run the following command from the top level of a
-working copy of UG-ANTS::
+working copy of UG-ANTS:
+
+.. versionchanged:: 0.4.0
+   The rose stem workflow is now run via ``cylc vip`` rather than ``rose stem``.
+
+.. code-block::
 
   $ cylc vip ./rose-stem -z group=all
 
