@@ -62,9 +62,9 @@ extlinks = {
         "%s",
     ),
     "ticket": ("https://code.metoffice.gov.uk/trac/ancil/ticket/%s", "MOSRS #%s"),
-    "issue": ("https://github.com/MetOffice/UG-ANTS/issues/%s", "#%s"),
+    "issue": ("https://github.com/MetOffice/UG-ANTS/issues/%s", "Issue #%s"),
     "milestone": ("https://github.com/MetOffice/UG-ANTS/milestone/%s?closed=1", None),
-    "pr": ("https://github.com/MetOffice/UG-ANTS/pull/%s", "#%s"),
+    "pr": ("https://github.com/MetOffice/UG-ANTS/pull/%s", "PR #%s"),
 }
 
 autodoc_default_options = {
