@@ -26,7 +26,7 @@ def tests_no_datum_warning():
         load_cube(get_data_path("non_ugrid_data.nc"))
         if not warnings_given:
             pytest.fail(
-                "Remove iris datum warning filter https://code.metoffice.gov.uk/trac/ancil/ticket/2586"
+                "Remove iris datum warning filter https://github.com/MetOffice/UG-ANTS/issues/39"
             )
 
 
