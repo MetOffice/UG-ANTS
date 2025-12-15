@@ -36,7 +36,7 @@ Feedback and contact information
 --------------------------------
 
 If you need information on this website in a different format like large print, easy
-read, audio recording or braille please email `miao@metoffice.gov.uk`_ and we will look into it.
+read, audio recording or braille please email miao@metoffice.gov.uk and we will look into it.
 
 We aim to respond to all reasonable requests for accessible information.
 
@@ -45,7 +45,7 @@ Reporting accessibility problems with this website
 
 We are always looking to improve the accessibility of this website. If you find any
 problems not listed on this page or think we are not meeting accessibility requirements,
-please email `miao@metoffice.gov.uk`_.
+please email miao@metoffice.gov.uk.
 
 Enforcement procedure
 ---------------------
@@ -120,7 +120,6 @@ This statement was prepared on 15 December 2025. It was last reviewed on 15 Dece
 .. _2018 legislation: https://www.legislation.gov.uk/uksi/2018/952/regulation/4
 .. _Equality Advisory and Support Service: https://www.equalityadvisoryservice.com/
 .. _Met Office: https://www.metoffice.gov.uk/
-.. _miao@metoffice.gov.uk: mailto:miao@metoffice.gov.uk
 .. _sphinx.ext.autodoc:  https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
 .. _sphinx.ext.autosummary: https://www.sphinx-doc.org/en/master/usage/extensions/autosummary.html
 .. _UG-ANTS Documentation: https://metoffice.github.io/UG-ANTS/
