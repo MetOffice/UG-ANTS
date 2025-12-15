@@ -1,6 +1,6 @@
 .. meta::
    :description lang=en: Accessibility Statement
-   :keywords: ANTS, accessibility
+   :keywords: UG-ANTS, accessibility
    :property=og:locale: en_GB
 
 
