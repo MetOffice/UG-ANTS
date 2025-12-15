@@ -91,10 +91,14 @@ napoleon_include_special_with_doc = True
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
+html_last_updated_fmt = "%d %B %Y"
 
 html_theme_options = {
     "github_url": "https://github.com/MetOffice/UG-ANTS",
     "show_toc_level": 2,
+    "footer_center": [
+        "last-updated",
+    ],
 }
 
 # Make sphinx-copybutton skip all prompt characters in pygments highlighted
