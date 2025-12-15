@@ -24,6 +24,7 @@ Contents:
    how_to.rst
    contributing.rst
    release_notes/index.rst
+   Accessibility Statement <accessibility.rst>
 
 Indices and tables
 ==================
