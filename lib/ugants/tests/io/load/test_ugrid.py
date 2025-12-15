@@ -18,7 +18,7 @@ from ugants.tests import get_data_path
 def tests_no_datum_warning():
     """Tests that an iris datum warning is raised when data is loaded.
 
-    Test for future behaviour: #2586
+    Test for future behaviour: https://github.com/MetOffice/UG-ANTS/issues/39
     When this test fails, remove the iris datum warning filter.
     """
     datum_warning = "Ignoring a datum in netCDF load for consistency with existing behaviour. In a future version of Iris, this datum will be applied. To apply the datum when loading, use the iris.FUTURE.datum_support flag."  # noqa: E501
@@ -26,7 +26,7 @@ def tests_no_datum_warning():
         load_cube(get_data_path("non_ugrid_data.nc"))
         if not warnings_given:
             pytest.fail(
-                "Remove iris datum warning filter https://code.metoffice.gov.uk/trac/ancil/ticket/2586"
+                "Remove iris datum warning filter https://github.com/MetOffice/UG-ANTS/issues/39"
             )
 
 

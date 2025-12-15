@@ -113,7 +113,7 @@ class ConvertToXIOS(ugants.abc.Application):
         If the cube has a standard name, copy that to the long name.  If the
         cube doesn't have a standard name, it will have a long name already.
 
-        See UGANTS ticket #2254.
+        See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/32.
         """
         for cube in self.results:
             if cube.long_name is None and cube.standard_name is not None:
@@ -127,7 +127,7 @@ class ConvertToXIOS(ugants.abc.Application):
         it should be preserved.  Otherwise, set the online operation to
         ``once`` as a default option.
 
-        See UGANTS ticket #2255.
+        See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/33.
         """
         for cube in self.results:
             if "online_operation" not in cube.attributes:
@@ -204,10 +204,10 @@ class ConvertToXIOS(ugants.abc.Application):
         Overrides parent class to use XIOS specific save arguments:
 
         1. ``online_operation`` is defined as a local rather than global
-           attribute.  See UGANTS ticket #2255.
+           attribute. See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/33.
         2. Fill value is set per-field to a value required by XIOS
            (see :meth:`get_fill_values`).
-           See UGANTS ticket #2253 and LFRic ticket #4168.
+           See https://github.com/MetOffice/tcd-XIOS2-extras/discussions/31.
         3. If :attr:`cast_to_single` is :obj:`True`, then all double (64 bit) float data
            will be cast to single (32 bit) float before saving.
 

@@ -13,6 +13,7 @@ library.  Any tests should then be updated to use the library versions.
 from itertools import pairwise
 
 import geovista as gv
+import iris.coord_systems
 import numpy as np
 from iris.coords import AuxCoord, DimCoord
 from iris.cube import Cube
@@ -169,6 +170,11 @@ def regular_grid_global_cube(n_lat: int, n_lon: int):
     return cube
 
 
+def _geodetic_coord_system():
+    """Create a spherical geodetic coordinate system with radius 6371229.0."""
+    return iris.coord_systems.GeogCS(6371229.0)
+
+
 def regular_grid_circular_longitude_coord(n_lon: int):
     """Generate a circular longitude dimension coordinate.
 
@@ -196,6 +202,7 @@ def regular_grid_circular_longitude_coord(n_lon: int):
         bounds=longitude_bounds,
         circular=True,
         units="degrees",
+        coord_system=_geodetic_coord_system(),
     )
     return longitude_coord
 
@@ -226,6 +233,7 @@ def regular_grid_latitude_coord(n_lat: int):
         standard_name="latitude",
         bounds=latitude_bounds,
         units="degrees",
+        coord_system=_geodetic_coord_system(),
     )
     return latitude_coord
 

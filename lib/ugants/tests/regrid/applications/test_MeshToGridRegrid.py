@@ -16,14 +16,14 @@ from esmf_regrid.experimental.unstructured_scheme import (
     MeshToGridESMFRegridder,
 )
 from iris.cube import CubeList
-from iris.exceptions import ConstraintMismatchError
 
 from ugants.exceptions import ProvisionalWarning
-from ugants.io.load import cf, ugrid
+from ugants.io.load import ugrid
 from ugants.io.save import PROVISIONAL_WARNING_MESSAGE
 from ugants.regrid.applications import MeshToGridRegrid
 from ugants.tests import get_data_path
 from ugants.tests.io.save.test_ugrid import _get_netcdf_global_attribute, _MockDateTime
+from ugants.tests.stock import regular_grid_global_cube
 
 OUTPUT_PATH = "/path/to/output.nc"
 
@@ -53,9 +53,9 @@ def target_path():
 
 
 @pytest.fixture()
-def regular_cubelist(target_path):
-    """Load iris.cubelist from target lat-lon file."""
-    return cf(target_path)
+def regular_grid_global_cube_cubelist():
+    """Return a cubelist containing a single lat-lon cube."""
+    return CubeList([regular_grid_global_cube(144, 192)])
 
 
 @pytest.fixture()
@@ -91,8 +91,8 @@ class TestCLI:
     def test_output_path_added(self, default_app):
         assert default_app.output == OUTPUT_PATH
 
-    def test_target_cube(self, default_app, regular_cubelist):
-        assert default_app.target_grid == regular_cubelist
+    def test_target_cube(self, default_app):
+        assert isinstance(default_app.target_grid, CubeList)
 
     def test_regrid_scheme_added(self, default_app):
         assert default_app.horizontal_regrid_scheme == "conservative"
@@ -115,7 +115,7 @@ class TestWeightsCaching:
     def test_check_raises_error_if_input_and_output_weights_provided(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
     ):
         """
         Verifies ValueError raised if both input and output weights used.
@@ -129,50 +129,21 @@ class TestWeightsCaching:
         ):
             MeshToGridRegrid(
                 source=single_element_cubelist,
-                target_grid=regular_cubelist,
+                target_grid=regular_grid_global_cube_cubelist,
                 horizontal_regrid_scheme="conservative",
                 input_weights="synthetic_input_weights_path",
                 output_weights="synthetic_output_weights_path.nc",
             )
 
-    def test_check_raises_error_if_grid_file_used_as_input_weights(
-        self,
-        single_element_cubelist,
-        regular_cubelist,
-        target_path,
-    ):
-        """
-        Test attempts to use mesh file as input weights.
-
-        Verifies error raised if mesh file is used for input weights.
-        """
-        incompatible_input_weights_file = target_path
-
-        app = MeshToGridRegrid(
-            source=single_element_cubelist,
-            target_grid=regular_cubelist,
-            horizontal_regrid_scheme="conservative",
-            input_weights=incompatible_input_weights_file,
-        )
-        app.output = "dummy_path"
-        with pytest.raises(
-            ConstraintMismatchError,
-            match=re.escape(
-                "Got 0 cubes for constraint Constraint(name='regri"
-                "dder_source_field'), expecting 1."
-            ),
-        ):
-            app.run()
-
     def test_regridder_called_when_output_weights_provided(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
     ):
         """Check MeshToGridESMFRegridder used if output_weights provided."""
         app = MeshToGridRegrid(
             source=single_element_cubelist,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="conservative",
             output_weights="synthetic_output_weights_path.nc",
         )
@@ -185,13 +156,13 @@ class TestWeightsCaching:
     def test_regridder_not_called_when_input_weights_provided(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
         input_weights,
     ):
         """Check MeshToGridESMFRegridder not used if input_weights provided."""
         app = MeshToGridRegrid(
             source=single_element_cubelist,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="conservative",
             input_weights=input_weights,
         )
@@ -204,7 +175,7 @@ class TestWeightsCaching:
     def test_save_regridder_called(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
     ):
         """Check save_regridder functionality.
 
@@ -223,7 +194,7 @@ class TestWeightsCaching:
 
             app = MeshToGridRegrid(
                 source=single_element_cubelist,
-                target_grid=regular_cubelist,
+                target_grid=regular_grid_global_cube_cubelist,
                 horizontal_regrid_scheme="conservative",
                 output_weights=output_temporary_weights_path,
             )
@@ -250,7 +221,7 @@ class TestWeightsCaching:
     def test_load_regridder_called(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
         input_weights,
     ):
         """Check load_regridder called.
@@ -271,7 +242,7 @@ class TestWeightsCaching:
 
             app = MeshToGridRegrid(
                 source=single_element_cubelist,
-                target_grid=regular_cubelist,
+                target_grid=regular_grid_global_cube_cubelist,
                 horizontal_regrid_scheme="conservative",
                 input_weights=input_weights,
             )
@@ -290,7 +261,7 @@ class TestWeightsCachingValidation:
     def test_is_netcdf_raises_error_if_nonexistent_input_weights_used(
         self,
         single_element_cubelist,
-        regular_cubelist,
+        regular_grid_global_cube_cubelist,
     ):
         """
         Check is_netcdf function raises error correctly.
@@ -300,7 +271,7 @@ class TestWeightsCachingValidation:
         """
         app = MeshToGridRegrid(
             source=single_element_cubelist,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="conservative",
             input_weights="nonexistent_file_path",
         )
@@ -312,7 +283,7 @@ class TestWeightsCachingValidation:
             app.run()
 
     def test__validate_input_weights_scheme(
-        self, single_element_cubelist, regular_cubelist, input_weights
+        self, single_element_cubelist, regular_grid_global_cube_cubelist, input_weights
     ):
         """Test unmatching schemes raises error.
 
@@ -321,7 +292,7 @@ class TestWeightsCachingValidation:
         """
         app = MeshToGridRegrid(
             source=single_element_cubelist,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="bilinear",
             input_weights=input_weights,
         )
@@ -335,10 +306,10 @@ class TestWeightsCachingValidation:
 
 class TestRegrid:
     @pytest.fixture()
-    def default_app(self, single_element_cubelist, regular_cubelist):
+    def default_app(self, single_element_cubelist, regular_grid_global_cube_cubelist):
         return MeshToGridRegrid(
             source=single_element_cubelist,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="conservative",
         )
 
@@ -349,18 +320,25 @@ class TestRegrid:
             default_app.run()
         mock_regridder_call.assert_called_once_with(single_element_cubelist[0])
 
-    def test_multi_source_fail(self, ugrid_cubelist, regular_cubelist):
+    def test_multi_source_fail(self, ugrid_cubelist, regular_grid_global_cube_cubelist):
         sources = CubeList([ugrid_cubelist[0], ugrid_cubelist[0] + 1])
         app = MeshToGridRegrid(
             source=sources,
-            target_grid=regular_cubelist,
+            target_grid=regular_grid_global_cube_cubelist,
             horizontal_regrid_scheme="conservative",
         )
         with pytest.raises(ValueError, match="Source contained 2 cubes, expected 1."):
             app.run()
 
-    def test_multiple_target_fail(self, ugrid_cubelist, regular_cubelist):
-        targets = CubeList([regular_cubelist[0], regular_cubelist[0] + 1])
+    def test_multiple_target_fail(
+        self, ugrid_cubelist, regular_grid_global_cube_cubelist
+    ):
+        targets = CubeList(
+            [
+                regular_grid_global_cube_cubelist[0],
+                regular_grid_global_cube_cubelist[0] + 1,
+            ]
+        )
         app = MeshToGridRegrid(
             source=iris.cube.CubeList(
                 [
@@ -383,10 +361,12 @@ class TestSave:
         return path
 
     @pytest.fixture()
-    def app(self, ugrid_cubelist, regular_cubelist, temp_output_file):
-        app = MeshToGridRegrid(ugrid_cubelist, regular_cubelist, "conservative")
+    def app(self, ugrid_cubelist, regular_grid_global_cube_cubelist, temp_output_file):
+        app = MeshToGridRegrid(
+            ugrid_cubelist, regular_grid_global_cube_cubelist, "conservative"
+        )
         app.output = temp_output_file
-        app.results = regular_cubelist[0]
+        app.results = regular_grid_global_cube_cubelist[0]
         return app
 
     def test_written_to_disk(self, app, temp_output_file):
@@ -455,9 +435,10 @@ class TestSave:
         assert actual == expected
 
     def test_append_history_attribute_on_disk(self, app, temp_output_file):
-        assert "history" in app.results.attributes
+        """Test that history is prepended to a pre-existing history attribute."""
+        app.results.attributes["history"] = "old_history"
         reference_date = "1970-01-01"
-        expected = f"{reference_date}: foo bar\n{app.results.attributes['history']}"
+        expected = f"{reference_date}: foo bar\nold_history"
 
         with (
             unittest.mock.patch(

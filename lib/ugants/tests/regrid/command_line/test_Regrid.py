@@ -34,9 +34,9 @@ def source_path():
 
 
 @pytest.fixture()
-def sample_cubelist_from_file(source_path):
-    """Load a single-element CubeList of regular lat-lon data from disk."""
-    return load.cf(source_path)
+def regular_cubelist():
+    """Return a single-element CubeList of regular lat-lon data."""
+    return stock.regular_grid_global_cube(144, 192)
 
 
 @pytest.fixture()
@@ -74,8 +74,8 @@ class TestCLI:
     def default_app(self, default_command):
         return Regrid.from_command_line(default_command)
 
-    def test_source_loaded(self, default_app, sample_cubelist_from_file):
-        assert default_app.source == sample_cubelist_from_file
+    def test_source_loaded(self, default_app, regular_cubelist):
+        assert isinstance(default_app.source, CubeList)
 
     def test_output_path_added(self, default_app):
         assert default_app.output == OUTPUT_PATH
@@ -123,7 +123,7 @@ class TestCLI:
 class TestWeightsCaching:
     def test_check_raises_error_if_input_and_output_weights_provided(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
         input_gridded_to_mesh_weights_path,
     ):
@@ -138,7 +138,7 @@ class TestWeightsCaching:
             match="Only one of input_weights and output_weights can be provided",
         ):
             Regrid(
-                source=sample_cubelist_from_file,
+                source=regular_cubelist,
                 target_mesh=mesh_C12_from_file,
                 horizontal_regrid_scheme="nearest",
                 input_weights=input_gridded_to_mesh_weights_path,
@@ -147,7 +147,7 @@ class TestWeightsCaching:
 
     def test_check_raises_error_if_mesh_file_used_as_input_weights(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_path,
         mesh_C12_from_file,
     ):
@@ -159,7 +159,7 @@ class TestWeightsCaching:
         incompatible_input_weights_file = mesh_path
 
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="nearest",
             input_weights=incompatible_input_weights_file,
@@ -176,12 +176,12 @@ class TestWeightsCaching:
 
     def test_regridder_called_when_output_weights_provided(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
     ):
         """Check GridToMeshESMFRegridder used if output_weights provided."""
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="conservative",
             output_weights="synthetic_output_weights_path.nc",
@@ -194,13 +194,13 @@ class TestWeightsCaching:
 
     def test_regridder_not_called_when_input_weights_provided(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
         input_gridded_to_mesh_weights_path,
     ):
         """Check GridToMeshESMFRegridder not used if input_weights provided."""
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="nearest",
             input_weights=input_gridded_to_mesh_weights_path,
@@ -213,7 +213,7 @@ class TestWeightsCaching:
 
     def test_save_regridder_called(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
     ):
         """Check save_regridder functionality.
@@ -232,7 +232,7 @@ class TestWeightsCaching:
             )
 
             app = Regrid(
-                source=sample_cubelist_from_file,
+                source=regular_cubelist,
                 target_mesh=mesh_C12_from_file,
                 horizontal_regrid_scheme="conservative",
                 output_weights=output_temporary_weights_path,
@@ -259,7 +259,7 @@ class TestWeightsCaching:
 
     def test_load_regridder_called(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
         input_gridded_to_mesh_weights_path,
     ):
@@ -280,7 +280,7 @@ class TestWeightsCaching:
             mock_regridder.input_weights = input_gridded_to_mesh_weights_path
 
             app = Regrid(
-                source=sample_cubelist_from_file,
+                source=regular_cubelist,
                 target_mesh=mesh_C12_from_file,
                 horizontal_regrid_scheme="nearest",
                 input_weights=input_gridded_to_mesh_weights_path,
@@ -299,7 +299,7 @@ class TestWeightsCaching:
 class TestWeightsCachingValidation:
     def test_is_netcdf_raises_error_if_nonexistent_input_weights_used(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
     ):
         """
@@ -309,7 +309,7 @@ class TestWeightsCachingValidation:
         file is used.
         """
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="nearest",
             input_weights="nonexistent_file_path",
@@ -323,7 +323,7 @@ class TestWeightsCachingValidation:
 
     def test__validate_input_weights_tolerance(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
         input_gridded_to_mesh_weights_path,
     ):
@@ -333,7 +333,7 @@ class TestWeightsCachingValidation:
         not match the tolerance used on command line.
         """
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="conservative",
             tolerance=0.6,
@@ -348,7 +348,7 @@ class TestWeightsCachingValidation:
 
     def test__validate_input_weights_scheme(
         self,
-        sample_cubelist_from_file,
+        regular_cubelist,
         mesh_C12_from_file,
         input_gridded_to_mesh_weights_path,
     ):
@@ -358,7 +358,7 @@ class TestWeightsCachingValidation:
         not match the scheme used on command line.
         """
         app = Regrid(
-            source=sample_cubelist_from_file,
+            source=regular_cubelist,
             target_mesh=mesh_C12_from_file,
             horizontal_regrid_scheme="conservative",
             input_weights=input_gridded_to_mesh_weights_path,

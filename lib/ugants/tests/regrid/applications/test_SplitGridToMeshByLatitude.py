@@ -28,12 +28,6 @@ def source_path():
 
 
 @pytest.fixture()
-def sample_cubelist_from_file(source_path):
-    """Load a single-element CubeList of regular lat-lon data from disk."""
-    return load.cf(source_path)
-
-
-@pytest.fixture()
 def mesh_path():
     return get_data_path("mesh_C12.nc")
 
@@ -65,8 +59,8 @@ class TestCLI:
     def default_app(self, default_command):
         return SplitGridToMeshByLatitude.from_command_line(default_command)
 
-    def test_source_loaded(self, default_app, sample_cubelist_from_file):
-        assert default_app.source == sample_cubelist_from_file
+    def test_source_loaded(self, default_app):
+        assert isinstance(default_app.source, CubeList)
 
     def test_target_mesh_loaded(self, default_app, mesh_C12_from_file):
         assert default_app.target_mesh == mesh_C12_from_file

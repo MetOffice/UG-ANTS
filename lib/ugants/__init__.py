@@ -11,10 +11,12 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("UG-ANTS")
 except PackageNotFoundError as exc:
+    from ._version import FALLBACK_VERSION
+
     warnings.warn(
-        f"{exc}. Unknown UG-ANTS version. "
+        f"{exc}. UG-ANTS version set to {FALLBACK_VERSION}. "
         "Consider installing UG-ANTS into your environment. See the installation "
         "instructions in the documentation for more details.",
         stacklevel=0,
     )
-    __version__ = "unknown"
+    __version__ = FALLBACK_VERSION

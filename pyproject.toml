@@ -92,9 +92,11 @@ extend-ignore-names = ["data_C*", "mesh_C*", "test_*"]
 [tool.pytest.ini_options]
 filterwarnings = [
     'error',
-    # #2409 - Deprecation warning from esmpy - fixed in later versions.
+    # Ignore warning raised when UG-ANTS is not installed into an environment
+    'ignore:No package metadata was found for UG-ANTS. UG-ANTS version set to .*. Consider installing UG-ANTS into your environment. See the installation instructions in the documentation for more details.:UserWarning',
+    # Deprecation warning from esmpy - fixed in later versions. https://github.com/MetOffice/UG-ANTS/issues/46
     'ignore:Implicit None on return values is deprecated and will raise KeyErrors.:DeprecationWarning:esmpy',
-    # TODO: #2294 for understanding and handling this iris 3 warning:
+    # TODO: https://github.com/MetOffice/UG-ANTS/issues/39 for understanding and handling this iris 3 warning:
     'ignore:Ignoring a datum in netCDF load for consistency with existing behaviour:FutureWarning',
     # Ignore the provisional warning given by ugants within unittests.
     'ignore:The results output by UG-ANTS are provisional and subject to change.::ugants',

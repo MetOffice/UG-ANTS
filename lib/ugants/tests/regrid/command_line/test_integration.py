@@ -14,6 +14,7 @@ from ugants.regrid.command_line import (
     SplitGridToMeshByLatitude,
 )
 from ugants.tests import get_data_path
+from ugants.tests.stock import regular_grid_global_cube
 
 
 def _standard_regrid(source, target_mesh, scheme, tolerance=0.0):
@@ -49,9 +50,7 @@ class TestConsistentResultsSingleCube:
     @pytest.mark.parametrize("scheme", ["conservative", "bilinear", "nearest"])
     def test_no_tolerance(self, scheme, n_bands):
         """Test that results are consistent when no tolerance is provided."""
-        source = load.cf(get_data_path("non_ugrid_data.nc")).extract_cube(
-            "land_area_fraction"
-        )
+        source = regular_grid_global_cube(144, 192)
         target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
 
         expected = _standard_regrid(source, target_mesh, scheme)
@@ -63,9 +62,7 @@ class TestConsistentResultsSingleCube:
     @pytest.mark.parametrize("scheme", ["conservative", "bilinear"])
     def test_with_tolerance(self, scheme, tolerance, n_bands):
         """Test that results are consistent across tolerances."""
-        source = load.cf(get_data_path("non_ugrid_data.nc")).extract_cube(
-            "land_area_fraction"
-        )
+        source = regular_grid_global_cube(144, 192)
         target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
 
         expected = _standard_regrid(source, target_mesh, scheme, tolerance)
@@ -81,7 +78,7 @@ class TestConsistentResultsMultiCube:
     @pytest.mark.parametrize("scheme", ["conservative", "bilinear", "nearest"])
     def test_no_tolerance(self, scheme, n_bands):
         """Test that results are consistent when no tolerance is provided."""
-        source = load.cf(get_data_path("non_ugrid_data.nc"))
+        source = CubeList([regular_grid_global_cube(144, 192)])
         second_source = source[0].copy() + 1
         source.append(second_source)
         target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
@@ -98,7 +95,7 @@ class TestConsistentResultsMultiCube:
     @pytest.mark.parametrize("scheme", ["conservative", "bilinear"])
     def test_with_tolerance(self, scheme, tolerance, n_bands):
         """Test that results are consistent across tolerances."""
-        source = load.cf(get_data_path("non_ugrid_data.nc"))
+        source = CubeList([regular_grid_global_cube(144, 192)])
         second_source = source[0].copy() + 1
         source.append(second_source)
         target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
