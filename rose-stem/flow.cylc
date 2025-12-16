@@ -56,7 +56,7 @@
 [scheduler]
     [[events]]
         mail events =
-        shutdown handlers = UG_ANTS_MODULE={{ UG_ANTS_MODULE }} PYTHONPATH_PREPEND={{ PYTHONPATH_PREPEND }} trac_generator.sh
+        shutdown handlers = shutdown_log_generator.sh
 
 [task parameters]
     split = 0
