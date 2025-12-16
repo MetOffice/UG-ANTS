@@ -9,8 +9,8 @@ set -eu
 # CYLC8 compatible suite log dumping script for trac template completion.
 
 export DB_LOCATION=${CYLC_WORKFLOW_RUN_DIR}/log/db
-export OUTPUT_STATUS_LOG=${CYLC_WORKFLOW_RUN_DIR}/trac_status.log
-export OUTPUT_DURATION_LOG=${CYLC_WORKFLOW_RUN_DIR}/trac_durations.log
+export OUTPUT_STATUS_LOG=${CYLC_WORKFLOW_RUN_DIR}/workflow_status.log
+export OUTPUT_DURATION_LOG=${CYLC_WORKFLOW_RUN_DIR}/task_durations.log
 
 # Suppress ug-ants-launch debug logs
 export QUIET_MODE=true
@@ -21,21 +21,29 @@ export PATH=${CYLC_WORKFLOW_SHARE_DIR}/fcm_make_ug_ants/build/utils/generate_log
 
 # User info for OUTPUT_STATUS_LOG
 date > $OUTPUT_STATUS_LOG
+# Git status of the workflow
+echo "Git status: " >> $OUTPUT_STATUS_LOG
+jq '.status' ${CYLC_WORKFLOW_RUN_DIR}/log/version/vcs.json >> $OUTPUT_STATUS_LOG
+echo "Commit: " >> $OUTPUT_STATUS_LOG
+# Git commit of the workflow
+export COMMIT=$(jq '.commit' ${CYLC_WORKFLOW_RUN_DIR}/log/version/vcs.json)
+# Remove the speechmarks from the commit
+echo ${COMMIT:1:-1} >> $OUTPUT_STATUS_LOG
+echo " " >> $OUTPUT_STATUS_LOG
 echo "-----" >> $OUTPUT_STATUS_LOG
-echo $USER ran suite located at: $CYLC_WORKFLOW_RUN_DIR >> $OUTPUT_STATUS_LOG
-echo "-----" >> $OUTPUT_STATUS_LOG
 
-# Verson info for OUTPUT_STATUS_LOG
-echo "=== Revision information ===" >> $OUTPUT_STATUS_LOG
+# Generate test status summary table for OUTPUT_STATUS_LOG
+echo "## Test Results - Summary ##" >>$OUTPUT_STATUS_LOG
+echo " | **tasks** | **total** | " >> $OUTPUT_STATUS_LOG
+echo " |:-|:-| " >> $OUTPUT_STATUS_LOG
+sqlite3 -separator " | " $DB_LOCATION "select '', status, count(status), '' from task_states" >> $OUTPUT_STATUS_LOG
+echo " " >> $OUTPUT_STATUS_LOG
 
-echo "{{{" >> $OUTPUT_STATUS_LOG
-cat ${CYLC_WORKFLOW_RUN_DIR}/log/version/vcs.json >> $OUTPUT_STATUS_LOG
-echo -e "\n}}}" >> $OUTPUT_STATUS_LOG
-
-# Generate test status table for OUTPUT_STATUS_LOG
-echo "=== Test Results ===" >> $OUTPUT_STATUS_LOG
-echo " || '''task''' || '''status''' || " >> $OUTPUT_STATUS_LOG
-ug-ants-launch sqlite3 -separator " || " $DB_LOCATION "select '', name, status, '' from task_states" >> $OUTPUT_STATUS_LOG
+# Generate test status summary table for OUTPUT_STATUS_LOG
+echo "## Test Results - Detail ##" >> $OUTPUT_STATUS_LOG
+echo " | **task** | **status** | " >> $OUTPUT_STATUS_LOG
+echo " |:-|:-| " >> $OUTPUT_STATUS_LOG
+sqlite3 -separator " | " $DB_LOCATION "select '', name, status, '' from task_states" >> $OUTPUT_STATUS_LOG
 
 # Generate OUTPUT_DURATION_LOG
-ug-ants-launch durations_main.py $DB_LOCATION $OUTPUT_DURATION_LOG trac
+ug-ants-launch durations_main.py $DB_LOCATION $OUTPUT_DURATION_LOG github

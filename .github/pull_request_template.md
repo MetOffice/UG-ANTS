@@ -88,7 +88,7 @@ Please add any further notes here.  If Generative AI tools have been used, a bri
 Please copy in the contents of your trac_status.log file(s) below (found in the cylc-run directory for your rose stem run) to your rose-stem testing here. **Note**: if your changes lead to a change in answers, you must run `rose stem --group=all` to help ensure all affected configurations has been flagged up.
 
 <div>
-Add trac_status.log contents for UG-ANTS rose-stem here.
+Add workflow_status.log contents for UG-ANTS rose-stem here.
 </div>
 <br>
 <div>
