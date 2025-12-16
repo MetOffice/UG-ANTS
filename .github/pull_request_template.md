@@ -13,7 +13,7 @@ If the answer to an item on the list is not applicable, feel free to replace the
 **Related branches (e.g. UG-Contrib):**<br>
 [please link any related branches here]
 
-**AUG-NTS rose stem logs** <br>
+**UG-ANTS rose stem logs** <br>
 [please enter the workflow name here as it has been run e.g. ug-ants-trunk/run5] <br>
 
 
