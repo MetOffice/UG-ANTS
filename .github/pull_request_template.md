@@ -46,7 +46,7 @@ Add further comments/details for your reviewers here on the impacts of the chang
 
 **Approvals for this change**
 
-- [ ] I have approval from the ug-ANTS core development team for these changes
+- [ ] I have approval from the UG-ANTS core development team for these changes
 
 ------
 
