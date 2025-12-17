@@ -4,4 +4,4 @@
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Define the fallback version to be used when UG-ANTS is not installed into an environment."""  # noqa: E501
 
-FALLBACK_VERSION = "0.4.0dev"
+FALLBACK_VERSION = "0.5.0dev"
