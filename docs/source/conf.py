@@ -100,10 +100,10 @@ html_context = {
 html_theme_options = {
     "github_url": "https://github.com/MetOffice/UG-ANTS",
     "show_toc_level": 2,
-     "footer_end": [
+    "footer_end": [
         "accessibility",
         "theme-version",
-     ],
+    ],
     "footer_center": [
         "last-updated",
     ],

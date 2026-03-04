@@ -197,8 +197,9 @@ def test_cube_numpy_data_mask_unmatched():
 
 
 def test_cube_dask_data_mask_unmatched():
-    error_string = \
+    error_string = (
         r"Mask and data not compatible: data shape is \(3,\), and mask shape is \(2,\)."
+    )
     with pytest.raises(np.ma.core.MaskError, match=error_string):
         dask.array.ma.masked_array([1, 2, 3], mask=[0, 1])
 
@@ -227,4 +228,3 @@ def test_cube_dask_data_mask_single_true():
     assert hasattr(acube.data, "mask")
     assert acube.data.mask.shape == acube.data.shape
     assert dask.array.all(dask.array.ma.getmaskarray(acube.core_data()))
-
