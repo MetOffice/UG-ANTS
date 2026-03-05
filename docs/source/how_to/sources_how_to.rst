@@ -21,8 +21,9 @@ in rose stem testing must be added to this directory. A version specific module
 file, site-specific ``ug-ants-launch`` script, or any other appropriate method
 can be used for setting the environment variable.
 
-This process should be repeated for ug-ancillary-file-science, with the
-``UG_CONTRIB_SOURCES_DIRECTORY_DEFAULT`` environment variable.
+This process should be repeated for ``ug-ancillary-file-science``, with the
+``UG_CONTRIB_SOURCES_DIRECTORY_DEFAULT`` environment variable. The contrib part
+of the name is legacy and may change in a future release.
 
 .. _sources-directory-structure:
 
@@ -32,7 +33,9 @@ Sources directory structure
 It is recommended to keep a complete set of sources for the current release.  It
 may also be necessary to store a set of sources for head of trunk, and a number
 of previous releases.  The following directory structure is suggested for
-UG-ANTS core and ug-ancillary-file-science::
+UG-ANTS core and ``ug-ancillary-file-science``
+(using the legacy contrib name rather than ``ug-ancillary-file-science`` for
+consistency with existing installations)::
 
   UG-ANTS
     ├── developer
