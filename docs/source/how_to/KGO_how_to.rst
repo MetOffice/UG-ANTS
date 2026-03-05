@@ -50,7 +50,7 @@ for the workflow to complete, and then run::
 
 At this point, re-running the rose stem workflow should result in a passing workflow.
 
-This process should be repeated for contrib, with the
+This process should be repeated for ug-ancillary-file-science, with the
 ``UG_CONTRIB_KGO_DIRECTORY_DEFAULT`` environment variable.
 
 .. _KGO-directory-structure:
@@ -61,7 +61,7 @@ KGO directory structure
 It is recommended to keep a complete set of KGOs for the current release.  It
 may also be necessary to store a set of KGOs for head of trunk, and a number
 of previous releases.  The following directory structure is suggested for UG-ANTS
-core and contrib::
+core and ug-ancillary-file-science::
 
   UG-ANTS
     ├── developer

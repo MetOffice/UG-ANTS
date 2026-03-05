@@ -15,14 +15,14 @@ To support the UG-ANTS developers in identifying the problem, please provide:
   arguments/inputs?
 * any error message text output
 * the version of UG-ANTS being used
-* the version of the contrib code being used, if applicable
-* if making a change to core or contrib, branches checked into the repository.
+* the version of the ug-ancillary-file-science code being used, if applicable
+* if making a change to core or ug-ancillary-file-science, branches checked into the repository.
   Please provide links and revision numbers.
 
 Due to the complexity of some workflows it can be hard to understand what
 is being run/intended, so when providing a recipe for repeating your issue
 please try and provide details of the script(s) being run and the inputs and
-arguments being used beyond just a pointer to "task X in suite Y".
+arguments being used beyond just a pointer to "task X in workflow Y".
 
 Feature Requests
 ----------------
