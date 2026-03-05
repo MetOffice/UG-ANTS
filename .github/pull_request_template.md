@@ -33,7 +33,7 @@ If your change will alter existing science results, you will need to seek approp
 **Impact of change**
 
 - [ ] This will maintain results for UG-ANTS `cylc vip ./rose-stem -z group=all` tests
-- [ ] This will this maintain results for UG-Contrib `cylc vip ./ rose-stem -z group=all` tests
+- [ ] This will this maintain results for UG-Contrib `cylc vip ./rose-stem -z group=all` tests
 - [ ] If this change adds a new capability, evidence has been supplied to show testing of ancillary generation across different resolutions e.g. For global ancillary generation capabilities for use in NWP C896 is expected to have been tested
 - [ ] This change has significantly impacted required resources (runtime and memory) in existing ancillary generation (if yes, give details)
 - [ ] This change alters existing ancils
