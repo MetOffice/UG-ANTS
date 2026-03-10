@@ -3,7 +3,7 @@ UG-ANTS 0.5.0 (March 2026)
 *****************************
 This release is primarily driven by migration of the unstructured grid ancillary science code to
 `GitHub <https://github.com/MetOffice/ug-ancillary-file-science>`_.
-For a full list of changes see the :milestone:`0.5 release milestone <1>`.
+For a full list of changes see the :milestone:`0.5 release milestone <2>`.
 
 Features
 ========
