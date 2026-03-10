@@ -1,0 +1,28 @@
+*****************************
+UG-ANTS 0.5.0 (March 2026)
+*****************************
+This release is primarily driven by migration of the unstructured grid ancillary science code to
+`GitHub <https://github.com/MetOffice/ug-ancillary-file-science>`_.
+For a full list of changes see the :milestone:`0.5 release milestone <1>`.
+
+Features
+========
+None
+
+Bugs Fixed
+==========
+None
+
+Incompatible Changes
+====================
+None
+
+Infrastructure
+==============
+- :pr:`67`: Add automated code style checks
+- :pr:`68`: Update PR template to cylc vip and correct group setting
+- :pr:`66`: Fix counts table counts query
+
+Documentation
+=============
+- :pr:`71`: Rename contrib references
