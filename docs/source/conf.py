@@ -81,7 +81,7 @@ linkcheck_anchors_ignore_for_url = ("https://semver.org/",)
 linkcheck_ignore = [
     r"https://github.com/MetOffice/UG-ANTS.*",
     r"https://github.com/MetOffice/tcd-XIOS2-extras.*",
-    r"https://github.com/MetOffice/ug-ancillary-file-science/*",
+    r"https://github.com/MetOffice/ug-ancillary-file-science.*",
 ]
 
 # Napoleon config
