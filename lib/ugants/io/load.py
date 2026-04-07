@@ -67,6 +67,51 @@ def ugrid(uris, constraints=None) -> iris.cube.CubeList:
     return ugrid_cubelist
 
 
+def ugrid_cube(uris, constraint=None) -> iris.cube.Cube:
+    """Load a UGrid file. Will not load if the file contains regular data.
+
+    Parameters
+    ----------
+    uris : Any
+        Location of file to load. Must be a NetCDF file.
+    constraints: Any | None
+        One iris constraint. The constraint can be either a string,
+        or an instance of :class:`iris.Constraint`. If the constraint is a string
+        it will be used to match against cube.name().
+
+    Returns
+    -------
+    iris.cube.Cube
+        A single iris :class:`iris.cube.Cube` containing the loaded data.
+
+    Raises
+    ------
+    iris.exceptions.InvalidCubeError
+        If the specified file does not contain UGrid data.
+    iris.exceptions.InvalidCubeError
+        If no data can be found which matches the provided constraint(s).
+    iris.exceptions.InvalidCubeError
+        If a mesh has been removed from a cube during constrained load.
+        This may be caused by constraining on an unstructured dimension.
+    """
+    with PARSE_UGRID_ON_LOAD.context():
+        cube = iris.load_cube(
+            uris, constraint=constraint, callback=_check_for_non_ugrid
+        )
+
+    # By constraining on a horizontal (unstructured) dimension, iris attempts to
+    # subset a MeshCoord. This causes the MeshCoords to be converted to AuxCoords,
+    # so the resulting cube has no mesh. This will result in non-ugrid data.
+    if not is_ugrid(cube):
+        raise iris.exceptions.InvalidCubeError(
+            f"Attempting to load UGrid data from '{uris}' with constraint(s) "
+            f"'{constraint}' has resulted in non-UGrid data being loaded. "
+            "This may be caused by constraining on an unstructured dimension."
+        )
+
+    return cube
+
+
 def _check_for_non_ugrid(cube: iris.cube.Cube, field, filename):
     """Check if the loaded data is UGrid or not.
 
