@@ -288,3 +288,4 @@ Contributor Licence Agreement:
 * Josh Rackham (Met Office)
 * Andrew Clark (Met Office)
 * Theo Geddes (Met Office)
+* Jennifer Hickson (Met Office)
