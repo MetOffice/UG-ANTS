@@ -66,7 +66,8 @@ def ugrid(uris, constraints=None) -> iris.cube.CubeList:
 
     return ugrid_cubelist
 
-def ugrid_cube(uris, constraints=None) -> iris.cube.Cube:
+
+def ugrid_cube(uris, constraint=None) -> iris.cube.Cube:
     """Load a UGrid file. Will not load if the file contains regular data.
 
     Parameters
@@ -95,7 +96,7 @@ def ugrid_cube(uris, constraints=None) -> iris.cube.Cube:
     """
     with PARSE_UGRID_ON_LOAD.context():
         cube = iris.load_cube(
-            uris, constraints=constraints, callback=_check_for_non_ugrid
+            uris, constraint=constraint, callback=_check_for_non_ugrid
         )
 
     # By constraining on a horizontal (unstructured) dimension, iris attempts to
@@ -104,12 +105,11 @@ def ugrid_cube(uris, constraints=None) -> iris.cube.Cube:
     if not is_ugrid(cube):
         raise iris.exceptions.InvalidCubeError(
             f"Attempting to load UGrid data from '{uris}' with constraint(s) "
-            f"'{constraints}' has resulted in non-UGrid data being loaded. "
+            f"'{constraint}' has resulted in non-UGrid data being loaded. "
             "This may be caused by constraining on an unstructured dimension."
         )
 
     return cube
-
 
 
 def _check_for_non_ugrid(cube: iris.cube.Cube, field, filename):
