@@ -4,23 +4,28 @@
 # See LICENSE.txt in the root of the repository for full licensing details.
 """Implementation for the fill missing points application."""
 
-from dataclasses import dataclass
-
-import iris.cube
+from iris.cube import CubeList
 
 from ugants.abc import Application
-from ugants.analysis.fill import KDTreeFill
+from ugants.analysis.fill import fill_cube
 
 
-@dataclass
 class FillMissingPoints(Application):
     """Fill missing points for UGrid data.
 
     Uses the :class:`~ugants.analysis.fill.KDTreeFill` algorithm.
     """
 
-    source: iris.cube.CubeList
-    target_mask: iris.cube.CubeList = None
+    def __init__(self, source: CubeList, target_mask: CubeList = None):
+        self.source = source
+
+        if target_mask:
+            if len(target_mask) != 1:
+                raise ValueError(f"Expecting one target mask, found {len(target_mask)}")
+            else:
+                self.target_mask = target_mask[0]
+        else:
+            self.target_mask = None
 
     def run(self):
         """Fill missing points in the source cube.
@@ -29,18 +34,6 @@ class FillMissingPoints(Application):
         target mask to fill missing points in the source cube. The filled result is
         stored in ``self.result``.
         """
-        if len(self.source) != 1:
-            raise ValueError(f"Expecting one cube, found {len(self.source)}")
-        else:
-            source_cube = self.source[0]
-
-        if self.target_mask:
-            if len(self.target_mask) != 1:
-                raise ValueError(f"Expecting one cube, found {len(self.target_mask)}")
-            else:
-                target_mask_cube = self.target_mask[0]
-        else:
-            target_mask_cube = None
-
-        filler = KDTreeFill(source_cube, target_mask_cube)
-        self.results = filler(source_cube)
+        self.results = CubeList(
+            fill_cube(cube, self.target_mask) for cube in self.source
+        )
