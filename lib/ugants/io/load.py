@@ -94,22 +94,16 @@ def ugrid_cube(uris, constraint=None) -> iris.cube.Cube:
         If a mesh has been removed from a cube during constrained load.
         This may be caused by constraining on an unstructured dimension.
     """
-    with PARSE_UGRID_ON_LOAD.context():
-        cube = iris.load_cube(
-            uris, constraint=constraint, callback=_check_for_non_ugrid
-        )
+    cubelist = ugrid(uris, constraint)
 
-    # By constraining on a horizontal (unstructured) dimension, iris attempts to
-    # subset a MeshCoord. This causes the MeshCoords to be converted to AuxCoords,
-    # so the resulting cube has no mesh. This will result in non-ugrid data.
-    if not is_ugrid(cube):
-        raise iris.exceptions.InvalidCubeError(
-            f"Attempting to load UGrid data from '{uris}' with constraint(s) "
-            f"'{constraint}' has resulted in non-UGrid data being loaded. "
-            "This may be caused by constraining on an unstructured dimension."
+    if len(cubelist) == 1:
+        return cubelist[0]
+    else:
+        raise (
+            iris.exceptions.InvalidCubeError(
+                f"Data found in file(s) '{uris}' contains more than one cube."
+            )
         )
-
-    return cube
 
 
 def _check_for_non_ugrid(cube: iris.cube.Cube, field, filename):

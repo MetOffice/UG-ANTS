@@ -22,8 +22,8 @@ def test_ugrid_sample_load():
 
 def test_ugrid_cubelist():
     with pytest.raises(
-        iris.exceptions.ConstraintMismatchError,
-        match="failed to merge into a single cube",
+        iris.exceptions.InvalidCubeError,
+        match="contains more than one cube",
     ):
         ugrid_cube(get_data_path("data_C4.nc"))
 
@@ -38,8 +38,9 @@ def test_non_ugrid_sample_load():
 
 def test_cube_not_found():
     with pytest.raises(
-        iris.exceptions.ConstraintMismatchError,
-        match="no cubes found",
+        iris.exceptions.InvalidCubeError,
+        match=r"No data found in file\(s\) '.*/data_C4.nc' matching the "
+        r"provided constraint\(s\) 'no_data_constraint'.",
     ):
         ugrid_cube(get_data_path("data_C4.nc"), constraint="no_data_constraint")
 
