@@ -144,7 +144,7 @@ class SplitMeshToGridByLatitude(Application):
     """The output **directory** to which to write the :attr:`source_bands` and
     :attr:`target_bands`."""
 
-    # TODO: https://github.com/MetOffice/UG-ANTS/issues/43
+    # TODO: https://github.com/MetOffice/UG-ANTS/issues/90
     #  Replace with a central load cube when that is available.
     _loader = _load_any_cubes
 
