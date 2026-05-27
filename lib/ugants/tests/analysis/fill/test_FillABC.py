@@ -346,7 +346,7 @@ class TestInit:
                 DummyConcreteFill(sample_data)
             except AttributeError:
                 pass
-        mock_method.assert_called_once_with()
+        mock_method.assert_called_once_with(sample_data, None)
 
     def test_identify_valid_fill_cells_call(self, sample_data):
         with mock.patch(
@@ -360,4 +360,4 @@ class TestInit:
                 DummyConcreteFill(sample_data)
             except AttributeError:
                 pass
-        mock_method.assert_called_once_with()
+        mock_method.assert_called_once_with(sample_data, None)
