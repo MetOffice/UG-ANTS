@@ -104,16 +104,16 @@ def cubedsphere_mesh(side_length) -> Mesh:
     return mesh
 
 
-def panel_cube(side_length, centre_lat=0, centre_lon=0, data=None) -> Cube:
+def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
     """Generate cube defined on a single cubed-sphere panel mesh for tests.
 
     Parameters
     ----------
     side_length : int
         Length of one side of the cubed-sphere panel mesh.
-    centre_lat : int
+    centre_lat : float
         Latitude of the centre of the panel, in degrees.
-    centre_lon : int
+    centre_lon : float
         Longitude of the centre of the panel, in degrees.
     data : :term:`array_like`
         Data to be added to the faces of the cube.
@@ -140,16 +140,16 @@ def panel_cube(side_length, centre_lat=0, centre_lon=0, data=None) -> Cube:
     return cube
 
 
-def panel_mesh(side_length, centre_lat=0, centre_lon=0) -> Mesh:
+def panel_mesh(side_length, centre_lat=0.0, centre_lon=0.0) -> Mesh:
     """Generate a single cubed-sphere panel mesh for tests.
 
     Parameters
     ----------
     side_length : int
         Length of one side of the cubed-sphere panel mesh.
-    centre_lat : int
+    centre_lat : float
         Latitude of the centre of the panel, in degrees.
-    centre_lon : int
+    centre_lon : float
         Longitude of the centre of the panel, in degrees.
 
     Returns
