@@ -105,7 +105,7 @@ def cubedsphere_mesh(side_length) -> Mesh:
 
 
 def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
-    """Generate cube defined on a single cubed-sphere panel mesh for tests.
+    """Generate a cube defined on a single cubed-sphere panel mesh for tests.
 
     Parameters
     ----------
