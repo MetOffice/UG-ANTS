@@ -26,7 +26,7 @@ def test_radii(sample_data):
     point_cloud = convert_to_cartesian(sample_data)
     # calculate radius of each point
     radii = (point_cloud**2).sum(axis=1) ** 0.5
-    assert_allclose(actual=radii, desired=1.0, atol=0.01)
+    assert_allclose(actual=radii, desired=1.0)
 
 
 def test_individual_points(sample_data):
