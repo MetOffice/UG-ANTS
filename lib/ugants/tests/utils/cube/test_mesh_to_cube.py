@@ -5,18 +5,13 @@
 import numpy as np
 import pytest
 from iris.cube import Cube
-
-from ugants.io.load import mesh as load_mesh
-from ugants.regrid.band_utils import (
-    mesh_to_cube,
-)
-from ugants.tests import get_data_path
+from ugants.tests.stock import cubedsphere_mesh
+from ugants.utils.cube import mesh_to_cube
 
 
 @pytest.fixture()
 def c12_mesh():
-    input_filepath = get_data_path("mesh_C12.nc")
-    mesh = load_mesh(input_filepath, "dynamics")
+    mesh = cubedsphere_mesh(12)
     return mesh
 
 
@@ -33,9 +28,14 @@ class TestMeshToCube:
 
     def test_fill_default_value(self, c12_mesh):
         cube = mesh_to_cube(c12_mesh)
-        assert all(np.isnan(cube.data))
+        assert np.all(cube.data.mask)
 
     def test_fill_custom_dtype(self, c12_mesh):
         dtype = np.float32
         cube = mesh_to_cube(c12_mesh, dtype=dtype)
         assert cube.data.dtype == np.float32
+
+    def test_custom_data(self, c12_mesh):
+        custom_data = np.ma.arange(12 * 12 * 6)
+        cube = mesh_to_cube(c12_mesh, data=custom_data)
+        np.testing.assert_array_equal(cube.data, custom_data)

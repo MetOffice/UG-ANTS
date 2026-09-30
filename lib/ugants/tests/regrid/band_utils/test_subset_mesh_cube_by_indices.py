@@ -8,14 +8,13 @@ import pytest
 from iris.coords import AuxCoord
 from iris.cube import Cube, CubeList
 
-from ugants.io import load
 from ugants.regrid.band_utils import subset_mesh_cube_by_indices
-from ugants.tests import get_data_path
+from ugants.tests.stock import cubedsphere_cube
 
 
 @pytest.fixture()
 def sample_mesh_cube():
-    return load.ugrid(get_data_path("data_C4.nc")).extract_cube("sample_data")
+    return cubedsphere_cube(4)
 
 
 class TestExceptions:

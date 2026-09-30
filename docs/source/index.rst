@@ -20,6 +20,7 @@ Contents:
    Installing UG-ANTS <installation.rst>
    Applications <applications/app_index.rst>
    API Documentation <lib/ugants.rst>
+   testing.rst
    tutorials.rst
    how_to.rst
    contributing.rst

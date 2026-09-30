@@ -6,14 +6,13 @@ import iris.coords
 import iris.cube
 import pytest
 
-from ugants.io import load
 from ugants.regrid.command_line import _validate_source_grids
-from ugants.tests import get_data_path
+from ugants.tests.stock import regular_grid_global_cube
 
 
 @pytest.fixture()
 def source_cubelist():
-    return load.cf(get_data_path("non_ugrid_data.nc"))
+    return iris.cube.CubeList([regular_grid_global_cube(50, 50)])
 
 
 class TestSameGrids:

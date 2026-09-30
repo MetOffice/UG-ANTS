@@ -13,10 +13,10 @@ from iris.cube import Cube, CubeList
 from iris.experimental.ugrid import Mesh
 
 from ugants.io import load
-from ugants.regrid.band_utils import mesh_to_cube
 from ugants.regrid.command_line import SplitGridToMeshByLatitude
 from ugants.tests import get_data_path
 from ugants.tests.stock import regular_grid_global_cube, regular_lat_lon_mesh
+from ugants.utils.cube import mesh_to_cube
 
 OUTPUT_PATH = "/path/to/output.nc"
 MESH_NAME = "dynamics"

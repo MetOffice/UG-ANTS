@@ -8,6 +8,17 @@ Should only be used in unittests.  If any of this functionality is needed in
 library or application code, it should be moved out of here and into the
 library.  Any tests should then be updated to use the library versions.
 
+.. important::
+
+   Mesh generators included in this module are *not* intended to produce meshes
+   for use in ancillary generation, they are provided for the purpose of unit
+   testing only.
+
+   The meshes produced here will not be consistent with those output from the
+   `LFRic mesh generators <https://metoffice.github.io/lfric_core/how_to_use_it/meshes/mesh_generators.html>`_.
+   Notably, :func:`cubedsphere_mesh` does not use an equiangular distribution of
+   nodes, unlike the LFRic equivalent, so there will be significant variation in
+   face areas.
 """
 
 from itertools import pairwise
@@ -15,10 +26,231 @@ from itertools import pairwise
 import geovista as gv
 import iris.coord_systems
 import numpy as np
+import pyvista as pv
 from iris.coords import AuxCoord, DimCoord
 from iris.cube import Cube
 from iris.experimental.ugrid import Connectivity, Mesh
 from iris.tests.stock.mesh import sample_mesh, sample_mesh_cube
+
+from ugants.utils.cube import mesh_to_cube
+
+from ._mesh import _polydata_to_mesh
+
+
+def cubedsphere_cube(side_length, data=None) -> Cube:
+    """Generate a cube defined on a cubed-sphere mesh for tests.
+
+    The data will be located on the faces of the mesh.
+
+    Parameters
+    ----------
+    side_length : int
+        Length of one side of the cubed-sphere mesh.
+    data : :term:`array_like`
+        Data to be added to the faces of the cube.
+
+    Returns
+    -------
+    :class:`iris.cube.Cube`
+        Cube defined on the cubed-sphere mesh
+
+    Important
+    ---------
+    This function is intended for unit testing purposes only. It should *not*
+    be used for ancillary generation.
+
+    Side lengths over 12 are not supported.
+
+    See Also
+    --------
+    :func:`cubedsphere_mesh`
+       For details on how the underlying mesh is generated.
+
+    """
+    mesh = cubedsphere_mesh(side_length)
+    if data is None:
+        data = np.ma.arange(mesh.face_coords.face_x.shape[0], dtype=np.float64)
+    cube = mesh_to_cube(mesh, data)
+    panel_number = AuxCoord(
+        points=np.repeat(np.arange(6), cube.shape[0] / 6),
+        long_name="panel_number",
+    )
+    cube.add_aux_coord(panel_number, 0)
+    return cube
+
+
+def cubedsphere_mesh(side_length) -> Mesh:
+    """Generate a cubed-sphere mesh for tests.
+
+    Parameters
+    ----------
+    side_length : int
+        Length of one side of the cubed-sphere mesh.
+
+    Returns
+    -------
+    :class:`iris.experimental.ugrid.Mesh`
+        The cubed-sphere mesh
+
+    Notes
+    -----
+    The procedure used to generate the mesh is to start with a cube
+    (the geometric solid, not the iris object), with each
+    face subdivided into equal sized squares. The 3D cartesian vectors of each
+    node and cell centre are projected onto a unit sphere and converted to
+    latitude-longitude coordinates.
+
+    The domain of the longitude coordinate is [-180, 180].
+
+    The cubed-sphere is oriented as follows:
+
+    ============  ===========  ================  =================
+    Panel number  Orientation  Central latitude  Central longitude
+    ============  ===========  ================  =================
+    0             -x           0                 180
+    1             +x           0                 0
+    2             -y           0                 -90
+    3             +y           0                 90
+    4             -z           -90               NA
+    5             +z           90                NA
+    ============  ===========  ================  =================
+
+    The mesh contains the following connectivities:
+
+    * ``face_face_connectivity``
+    * ``face_node_connectivity``
+
+    Important
+    ---------
+    This function is intended for unit testing purposes only. It should *not*
+    be used for ancillary generation.
+
+    Side lengths over 12 are not supported.
+
+    See Also
+    --------
+    `PyVista Box <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.box>`_
+       The object used to define the starting 3D cube which is projected to the
+       unit sphere
+
+    """
+    if side_length < 1:
+        raise ValueError(
+            f"Cubedsphere side length must be positive (requested {side_length})"
+        )
+    if side_length > 12:
+        raise ValueError(
+            "The cubedsphere mesh generator does not support "
+            f"side lengths above 12 (requested {side_length})"
+        )
+    box_polydata = pv.Box(level=side_length - 1)
+    mesh = _polydata_to_mesh(box_polydata)
+    return mesh
+
+
+def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
+    """Generate a cube defined on a single cubed-sphere panel mesh for tests.
+
+    The data will be located on the faces of the mesh.
+
+    Parameters
+    ----------
+    side_length : int
+        Length of one side of the cubed-sphere panel mesh.
+    centre_lat : float
+        Latitude of the centre of the panel, in degrees.
+    centre_lon : float
+        Longitude of the centre of the panel, in degrees.
+    data : :term:`array_like`
+        Data to be added to the faces of the cube.
+
+    Returns
+    -------
+    :class:`iris.cube.Cube`
+        Cube defined on a single panel mesh
+
+    Important
+    ---------
+    This function is intended for unit testing purposes only. It should *not*
+    be used for ancillary generation.
+
+    Side lengths over 12 are not supported.
+
+    See Also
+    --------
+    :func:`panel_mesh`
+       For details on how the underlying mesh is generated.
+
+    """
+    mesh = panel_mesh(side_length, centre_lat, centre_lon)
+    cube = mesh_to_cube(mesh, data)
+    return cube
+
+
+def panel_mesh(side_length, centre_lat=0.0, centre_lon=0.0) -> Mesh:
+    """Generate a single cubed-sphere panel mesh for tests.
+
+    Parameters
+    ----------
+    side_length : int
+        Length of one side of the cubed-sphere panel mesh.
+    centre_lat : float
+        Latitude of the centre of the panel, in degrees.
+    centre_lon : float
+        Longitude of the centre of the panel, in degrees.
+
+    Returns
+    -------
+    :class:`iris.experimental.ugrid.Mesh`
+        The panel mesh.
+
+    Notes
+    -----
+    The procedure used to generate the mesh is to start with a plane subdivided
+    into equal sizes squares. The 3D cartesian vectors of each
+    node and cell centre are projected onto a unit sphere and converted to
+    latitude-longitude coordinates.
+
+    Important
+    ---------
+    This function is intended for unit testing purposes only. It should *not*
+    be used for ancillary generation.
+
+    Side lengths over 12 are not supported.
+
+    See Also
+    --------
+    `PyVista Plane <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.plane>`_
+       The object used to define the starting plane which is projected to the
+       unit sphere
+
+    """
+    if side_length < 1:
+        raise ValueError(
+            f"Panel side length must be positive (requested {side_length})"
+        )
+    if side_length > 12:
+        raise ValueError(
+            "The panel mesh generator does not support "
+            f"side lengths above 12 (requested {side_length})"
+        )
+    centre_lat_rad = np.radians(centre_lat)
+    centre_lon_rad = np.radians(centre_lon)
+    centre_vector = (
+        np.cos(centre_lat_rad) * np.cos(centre_lon_rad),
+        np.cos(centre_lat_rad) * np.sin(centre_lon_rad),
+        np.sin(centre_lat_rad),
+    )
+    plane_polydata = pv.Plane(
+        center=centre_vector,
+        direction=centre_vector,
+        i_size=2,
+        j_size=2,
+        i_resolution=side_length,
+        j_resolution=side_length,
+    )
+    mesh = _polydata_to_mesh(plane_polydata)
+    return mesh
 
 
 def mesh_cube(number_of_levels=0, include_mesh_dimcoord=False, **sample_mesh_kwargs):
@@ -33,11 +265,11 @@ def mesh_cube(number_of_levels=0, include_mesh_dimcoord=False, **sample_mesh_kwa
         Number of vertical levels, by default 0.
         If zero, then no levels dimension is added to the cube,
         so it will contain only an unstructured mesh dimension.
-    include_mesh_dimcoord: bool, optional
+    include_mesh_dimcoord: :obj:`bool`, optional
         If True, include a DimCoord on the mesh dimension called "i_mesh_face",
         representing the indices of the faces.
     **sample_mesh_kwargs :
-        Keyword arguments to pass to :func:`iris.tests.stock.mesh.sample_mesh`.
+        Keyword arguments to pass to ``iris.tests.stock.mesh.sample_mesh``.
 
     Returns
     -------
@@ -77,19 +309,19 @@ def regular_lat_lon_mesh(
     >>> regular_lat_lon_mesh(0, 15, 0, 10, (3, 2))
 
     The following diagram illustrates the indexing of the
-    nodes [i] and the faces (j) of the dummy mesh.
+    nodes [i] and the faces (j) of the dummy mesh::
 
-    10.0  [2]-------[5]-------[8]-------[11]
-           |         |         |         |
-    7.5    |   (1)   |   (3)   |   (5)   |
-           |         |         |         |
-    5.0   [1]-------[4]-------[7]-------[10]
-           |         |         |         |
-    2.5    |   (0)   |   (2)   |   (4)   |
-           |         |         |         |
-    0.0   [0]-------[3]-------[6]-------[9]
+        10.0  [2]-------[5]-------[8]-------[11]
+               |         |         |         |
+        7.5    |   (1)   |   (3)   |   (5)   |
+               |         |         |         |
+        5.0   [1]-------[4]-------[7]-------[10]
+               |         |         |         |
+        2.5    |   (0)   |   (2)   |   (4)   |
+               |         |         |         |
+        0.0   [0]-------[3]-------[6]-------[9]
 
-          0.0  2.5  5.0  7.5 10.0 12.5 15.0
+              0.0  2.5  5.0  7.5 10.0 12.5 15.0
 
     Parameters
     ----------
@@ -140,9 +372,10 @@ def regular_grid_global_cube(n_lat: int, n_lon: int):
 
     The cube will have two dimensions:
 
-    - Dimension 0: latitude, n_lat points, generated by :func:`latitude_coord_regular`
+    - Dimension 0: latitude, n_lat points, generated by
+      :func:`regular_grid_latitude_coord`
     - Dimension 1: longitude, n_lon points,
-      generated by :func:`circular_longitude_coord_regular`
+      generated by :func:`regular_grid_circular_longitude_coord`
 
     The cube's synthetic data is generated with :func:`numpy.arange`.
 
@@ -256,9 +489,9 @@ def four_vertical_levels_cube():
     the bounds represent rho levels.
 
     Sigma values for level 'i' below the first constant rho level are calculated
-    according to the formula:
+    according to the formula::
 
-    sigma[i] = (1 - (level_height[i] / level_height[j])) ** 2
+       sigma[i] = (1 - (level_height[i] / level_height[j])) ** 2
 
     where 'j' is the "first constant rho level", i.e. the first rho level at which
     sigma is zero. Note that 'i' can represent a point (theta) or a bound (rho).
@@ -267,31 +500,31 @@ def four_vertical_levels_cube():
 
     For the purposes of this test function, these sigma values are hard-coded and
     rounded to 3 decimal places.
-    For all levels above the first constant rho level, sigma is 0.
+    For all levels above the first constant rho level, sigma is 0::
 
-    ---- rho (bound)
-    ==== theta (point)
+        ---- rho (bound)
+        ==== theta (point)
 
-    model            level
-    level            height  sigma
-    number
-       --------------- 20.0   0.0
+        model            level
+        level            height  sigma
+        number
+           --------------- 20.0   0.0
 
-    4  =============== 16.0   0.0
+        4  =============== 16.0   0.0
 
-       --------------- 12.0   0.0  > first constant rho level
+           --------------- 12.0   0.0  > first constant rho level
 
-    3  ===============  8.0   0.111
+        3  ===============  8.0   0.111
 
-       ---------------  6.0   0.25
+           ---------------  6.0   0.25
 
-    2  ===============  4.0   0.444
+        2  ===============  4.0   0.444
 
-       ---------------  3.0   0.563
+           ---------------  3.0   0.563
 
-    1  ===============  2.0   0.694
+        1  ===============  2.0   0.694
 
-       ---------------  0.0   1.0
+           ---------------  0.0   1.0
     """
     cube = mesh_cube(number_of_levels=4)
     cube.rename("vertical_cube")

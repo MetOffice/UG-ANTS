@@ -7,14 +7,12 @@
 import pytest
 from iris.cube import CubeList
 
-from ugants.io import load
 from ugants.regrid.command_line import (
     RecombineMeshBands,
     Regrid,
     SplitGridToMeshByLatitude,
 )
-from ugants.tests import get_data_path
-from ugants.tests.stock import regular_grid_global_cube
+from ugants.tests.stock import cubedsphere_mesh, regular_grid_global_cube
 
 
 def _standard_regrid(source, target_mesh, scheme, tolerance=0.0):
@@ -51,7 +49,7 @@ class TestConsistentResultsSingleCube:
     def test_no_tolerance(self, scheme, n_bands):
         """Test that results are consistent when no tolerance is provided."""
         source = regular_grid_global_cube(144, 192)
-        target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
+        target_mesh = cubedsphere_mesh(12)
 
         expected = _standard_regrid(source, target_mesh, scheme)
         actual = _split_regrid(source, target_mesh, scheme, n_bands=n_bands)
@@ -63,7 +61,7 @@ class TestConsistentResultsSingleCube:
     def test_with_tolerance(self, scheme, tolerance, n_bands):
         """Test that results are consistent across tolerances."""
         source = regular_grid_global_cube(144, 192)
-        target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
+        target_mesh = cubedsphere_mesh(12)
 
         expected = _standard_regrid(source, target_mesh, scheme, tolerance)
         actual = _split_regrid(source, target_mesh, scheme, tolerance, n_bands)
@@ -81,7 +79,7 @@ class TestConsistentResultsMultiCube:
         source = CubeList([regular_grid_global_cube(144, 192)])
         second_source = source[0].copy() + 1
         source.append(second_source)
-        target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
+        target_mesh = cubedsphere_mesh(12)
 
         expected = _standard_regrid(source, target_mesh, scheme)
         actual = _split_regrid(source, target_mesh, scheme, n_bands=n_bands)
@@ -98,7 +96,7 @@ class TestConsistentResultsMultiCube:
         source = CubeList([regular_grid_global_cube(144, 192)])
         second_source = source[0].copy() + 1
         source.append(second_source)
-        target_mesh = load.mesh(get_data_path("mesh_C12.nc"), "dynamics")
+        target_mesh = cubedsphere_mesh(12)
 
         expected = _standard_regrid(source, target_mesh, scheme, tolerance=tolerance)
         actual = _split_regrid(

@@ -13,31 +13,7 @@ from iris.coords import AuxCoord
 from iris.cube import Cube, CubeList
 from iris.experimental.ugrid import Connectivity, Mesh
 
-
-def mesh_to_cube(mesh, dtype: np.dtype = np.float64):
-    """Turn a mesh into a :class:`iris.cube.Cube` with data using ``np.nan``.
-
-    Parameters
-    ----------
-    mesh : :class:`iris.experimental.ugrid.mesh.Mesh`
-        The mesh to be converted to an :class:`iris.cube.Cube`
-    dtype : :class:`numpy.dtype`
-        The data type used for the cube.data :class:`numpy.ndarray`, by default
-        ``np.float64``.
-
-    Returns
-    -------
-    :class:`iris.cube.Cube`
-        The providied mesh as an :class:`iris.cube.Cube`.
-    """
-    data = np.full(mesh.face_coords.face_x.shape[0], np.nan, dtype=dtype)
-    cube = Cube(data)
-
-    mesh_coordinates = mesh.to_MeshCoords("face")
-    for coord in mesh_coordinates:
-        cube.add_aux_coord(coord, 0)
-
-    return cube
+from ugants.utils.cube import get_connectivity_indices
 
 
 def generate_band_bounds(start: float, stop: float, n_bands: int):
@@ -201,7 +177,9 @@ def reconstruct_mesh_cube(cube: Cube, mesh_dim: int):
         raise ValueError("The provided cube already has a mesh.")
 
     reconstructed_cube = cube.copy()
-    mesh = Mesh.from_coords(*reconstructed_cube.coords(dimensions=mesh_dim))
+    x_coord = reconstructed_cube.coord(axis="x")
+    y_coord = reconstructed_cube.coord(axis="y")
+    mesh = Mesh.from_coords(x_coord, y_coord)
     # This mesh is not complete, nodes are duplicated
     #
     # Example
@@ -474,7 +452,7 @@ def _add_padding(minimum, maximum, padding_fraction=0.1):
     return minimum, maximum
 
 
-def get_faces_that_overlap_bounds(cube, bounds, index=1):
+def get_faces_that_overlap_bounds(cube, bounds):
     """Get the indices of faces with one or more nodes within given latitude bounds.
 
     Parameters
@@ -491,8 +469,8 @@ def get_faces_that_overlap_bounds(cube, bounds, index=1):
     """
     min_lat, max_lat = min(bounds), max(bounds)
     min_lat, max_lat = _add_padding(min_lat, max_lat)
-    node_indices = np.ravel(cube.mesh.face_node_connectivity.indices)
-    node_latitudes = cube.mesh.node_coords.node_y.points[node_indices - index]
+    node_indices = np.ravel(get_connectivity_indices(cube, "face_node_connectivity"))
+    node_latitudes = cube.mesh.node_coords.node_y.points[node_indices]
     node_mask = (min_lat <= node_latitudes) & (node_latitudes <= max_lat)
     face_node_mask = np.reshape(
         node_mask, cube.mesh.face_node_connectivity.indices.shape

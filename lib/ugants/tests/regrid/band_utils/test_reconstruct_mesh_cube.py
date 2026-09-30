@@ -8,11 +8,9 @@ import pytest
 from iris.coords import AuxCoord
 from iris.cube import CubeList
 
-from ugants.regrid.band_utils import (
-    mesh_to_cube,
-    reconstruct_mesh_cube,
-)
+from ugants.regrid.band_utils import reconstruct_mesh_cube
 from ugants.tests.stock import regular_lat_lon_mesh
+from ugants.utils.cube import mesh_to_cube
 
 
 @pytest.fixture()

@@ -23,11 +23,7 @@ class TestConvertToXIOS:
         """Assert that long name is set on disk even if there is a standard name."""
         expected = "surface_altitude"
 
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
         source_cube.rename("surface_altitude")
         assert source_cube.long_name is None
         output_path = temporary_filepaths_function(suffix=".nc")
@@ -46,11 +42,7 @@ class TestConvertToXIOS:
         """Assert that long name is not set on cube even when it is set on disk."""
         expected = None
 
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
         source_cube.rename("surface_altitude")
         assert source_cube.long_name is None
         output_path = temporary_filepaths_function(suffix=".nc")
@@ -67,19 +59,15 @@ class TestConvertToXIOS:
     ):
         expected = "once"
 
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
-        source_cube.attributes.pop("online_operation")
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
+        assert "online_operation" not in source_cube.attributes
         output_path = temporary_filepaths_function(suffix=".nc")
         converter = ConvertToXIOS(source_cube, cast_to_single)
         converter.output = output_path
         converter.run()
         converter.save()
         dataset = netCDF4.Dataset(output_path)
-        actual = dataset["sample_data"].online_operation
+        actual = dataset["face_data"].online_operation
 
         assert actual == expected
 
@@ -88,11 +76,7 @@ class TestConvertToXIOS:
     ):
         expected = "foo"
 
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
         source_cube.attributes["online_operation"] = "foo"
         output_path = temporary_filepaths_function(suffix=".nc")
         converter = ConvertToXIOS(source_cube, cast_to_single)
@@ -100,19 +84,15 @@ class TestConvertToXIOS:
         converter.run()
         converter.save()
         dataset = netCDF4.Dataset(output_path)
-        actual = dataset["sample_data"].online_operation
+        actual = dataset["face_data"].online_operation
 
         assert actual == expected
 
     def test_default_online_operation_not_set_on_cube(
         self, cast_to_single, temporary_filepaths_function
     ):
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
-        source_cube.attributes.pop("online_operation")
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
+        assert "online_operation" not in source_cube.attributes
         output_path = temporary_filepaths_function(suffix=".nc")
         converter = ConvertToXIOS(source_cube, cast_to_single)
         converter.output = output_path
@@ -126,11 +106,7 @@ class TestConvertToXIOS:
     ):
         expected = "foo"
 
-        source_cubes = ugants.io.load.ugrid(
-            ugants.tests.get_data_path("data_C4.nc"), "sample_data"
-        )
-        assert len(source_cubes) == 1
-        source_cube = source_cubes[0]
+        source_cube = ugants.tests.stock.cubedsphere_cube(4)
         source_cube.attributes["online_operation"] = "foo"
         output_path = temporary_filepaths_function(suffix=".nc")
         converter = ConvertToXIOS(source_cube, cast_to_single)

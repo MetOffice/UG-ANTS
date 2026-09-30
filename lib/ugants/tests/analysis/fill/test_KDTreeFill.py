@@ -9,9 +9,7 @@ from unittest import mock
 import numpy as np
 import pytest
 from ugants.analysis.fill import KDTreeFill
-from ugants.io import load
-from ugants.tests import get_data_path
-from ugants.tests.stock import mesh_cube
+from ugants.tests.stock import cubedsphere_cube
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:No cells in the source cube require filling.:UserWarning",
@@ -24,8 +22,7 @@ pytestmark = pytest.mark.filterwarnings(
 
 @pytest.fixture()
 def sample_data():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
     return sample_data
 
 
@@ -61,7 +58,7 @@ class TestCalculateFillLookup:
 
 class TestNoTargetMask:
     def test_different_mesh_fail(self, sample_data):
-        cube_to_fill = mesh_cube(n_faces=5)
+        cube_to_fill = cubedsphere_cube(5)
         filler = KDTreeFill(sample_data)
         with pytest.raises(ValueError) as error:
             filler(cube_to_fill)
@@ -75,28 +72,25 @@ class TestNoTargetMask:
         actual = filler(source)
 
         expected = sample_data.copy()
-        expected.data[25] = expected.data[26]
+        expected.data[25] = expected.data[24]
 
         assert actual == expected
 
-    def test_masked_cell(self):
-        data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-        sample_data = data_C4.extract_cube("sample_data")
-
+    def test_masked_cell(self, sample_data):
         source = sample_data.copy()
-        source.data = np.ma.masked_where(source.data == 26.0, source.data)
+        source.data = np.ma.asarray(source.data)
+        source.data[25] = np.ma.masked
 
         filler = KDTreeFill(source)
         actual = filler(source)
 
         expected = sample_data.copy()
-        expected.data[25] = expected.data[26]
+        expected.data[25] = expected.data[24]
 
         assert actual == expected
 
     def test_no_mask_no_nan(self):
-        data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-        sample_data = data_C4.extract_cube("sample_data")
+        sample_data = cubedsphere_cube(4)
 
         source = sample_data.copy()
         filler = KDTreeFill(source)
@@ -107,7 +101,7 @@ class TestNoTargetMask:
 
 class TestTargetMask:
     def test_different_mesh_fail(self, sample_data, sample_target_mask):
-        cube_to_fill = mesh_cube(n_faces=5)
+        cube_to_fill = cubedsphere_cube(5)
         filler = KDTreeFill(sample_data, sample_target_mask)
         with pytest.raises(ValueError) as error:
             filler(cube_to_fill)
@@ -184,7 +178,7 @@ class TestRepr:
     def test_no_target_mask(self, sample_data):
         filler = KDTreeFill(sample_data)
         expected = (
-            "KDTreeFill(source=<iris 'Cube' of sample_data / (1) (-- : 96)>, "
+            "KDTreeFill(source=<iris 'Cube' of face_data / (unknown) (-- : 96)>, "
             "target_mask=None)"
         )
         actual = repr(filler)
@@ -193,8 +187,8 @@ class TestRepr:
     def test_with_target_mask(self, sample_data, sample_target_mask):
         filler = KDTreeFill(sample_data, sample_target_mask)
         expected = (
-            "KDTreeFill(source=<iris 'Cube' of sample_data / (1) (-- : 96)>, "
-            "target_mask=<iris 'Cube' of sample_data / (1) (-- : 96)>)"
+            "KDTreeFill(source=<iris 'Cube' of face_data / (unknown) (-- : 96)>, "
+            "target_mask=<iris 'Cube' of face_data / (unknown) (-- : 96)>)"
         )
         actual = repr(filler)
         assert actual == expected

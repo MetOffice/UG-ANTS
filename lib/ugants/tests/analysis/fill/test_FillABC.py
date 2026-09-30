@@ -10,9 +10,7 @@ import numpy as np
 import pytest
 from iris.cube import Cube
 from ugants.analysis.fill import FillABC
-from ugants.io import load
-from ugants.tests import get_data_path
-from ugants.tests.stock import mesh_cube
+from ugants.tests.stock import cubedsphere_cube
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:No cells in the source cube require filling.:UserWarning",
@@ -22,8 +20,7 @@ pytestmark = pytest.mark.filterwarnings(
 
 @pytest.fixture()
 def sample_data():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
     return sample_data
 
 
@@ -306,8 +303,8 @@ class TestInit:
     def test_repr_no_mask(self, sample_data):
         dummy_instance = DummyConcreteFill(sample_data)
         expected = (
-            "DummyConcreteFill(source=<iris 'Cube' of sample_data / (1) (-- : 96)>, "
-            "target_mask=None)"
+            "DummyConcreteFill(source=<iris 'Cube' of face_data / (unknown) (-- : 96)>,"
+            " target_mask=None)"
         )
         actual = repr(dummy_instance)
         assert actual == expected
@@ -315,14 +312,14 @@ class TestInit:
     def test_repr_with_mask(self, sample_data, sample_target_mask):
         dummy_instance = DummyConcreteFill(sample_data, sample_target_mask)
         expected = (
-            "DummyConcreteFill(source=<iris 'Cube' of sample_data / (1) (-- : 96)>, "
-            "target_mask=<iris 'Cube' of sample_data / (1) (-- : 96)>)"
+            "DummyConcreteFill(source=<iris 'Cube' of face_data / (unknown) (-- : 96)>,"
+            " target_mask=<iris 'Cube' of face_data / (unknown) (-- : 96)>)"
         )
         actual = repr(dummy_instance)
         assert actual == expected
 
     def test_different_target_mesh_fail(self, sample_data):
-        target_mask = mesh_cube(n_faces=5)
+        target_mask = cubedsphere_cube(5)
         with pytest.raises(ValueError) as error:
             DummyConcreteFill(sample_data, target_mask)
         assert str(error.value) == "Source and target mask have different meshes"
