@@ -38,18 +38,6 @@ class CommonMesh(ABC):
         assert isinstance(mesh, Mesh)
 
     @pytest.mark.parametrize("side_length", side_lengths)
-    def test_n_faces(self, side_length):
-        mesh = self.make_mesh(side_length)
-        n_faces = mesh.face_node_connectivity.indices.shape[0]
-        assert n_faces == self.expected_n_faces(side_length)
-
-    @pytest.mark.parametrize("side_length", side_lengths)
-    def test_n_nodes(self, side_length):
-        mesh = self.make_mesh(side_length)
-        n_nodes = mesh.node_coords.node_x.points.shape[0]
-        assert n_nodes == self.expected_n_nodes(side_length)
-
-    @pytest.mark.parametrize("side_length", side_lengths)
     def test_face_node_connectivity_shape(self, side_length):
         mesh = self.make_mesh(side_length)
         indices = mesh.face_node_connectivity.indices
@@ -67,7 +55,7 @@ class CommonMesh(ABC):
         assert face_face.indices.shape == (self.expected_n_faces(side_length), 4)
 
     @pytest.mark.parametrize("side_length", side_lengths)
-    def test_face_coords_exist(self, side_length):
+    def test_face_coords(self, side_length):
         mesh = self.make_mesh(side_length)
         assert mesh.face_coords.face_x is not None
         assert mesh.face_coords.face_y is not None
@@ -79,7 +67,7 @@ class CommonMesh(ABC):
         )
 
     @pytest.mark.parametrize("side_length", side_lengths)
-    def test_node_coords_exist(self, side_length):
+    def test_node_coords(self, side_length):
         mesh = self.make_mesh(side_length)
         assert mesh.node_coords.node_x is not None
         assert mesh.node_coords.node_y is not None
