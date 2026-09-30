@@ -8,6 +8,17 @@ Should only be used in unittests.  If any of this functionality is needed in
 library or application code, it should be moved out of here and into the
 library.  Any tests should then be updated to use the library versions.
 
+.. important::
+
+   Mesh generators included in this module are *not* intended to produce meshes
+   for use in ancillary generation, they are provided for the purpose of unit
+   testing only.
+
+   The meshes produced here will not be consistent with those output from the
+   `LFRic mesh generators <https://metoffice.github.io/lfric_core/how_to_use_it/meshes/mesh_generators.html>`_.
+   Notably, :func:`cubedsphere_mesh` does not use an equiangular distribution of
+   nodes, unlike the LFRic equivalent, so there will be significant variation in
+   face areas.
 """
 
 from itertools import pairwise
@@ -29,6 +40,8 @@ from ._mesh import _polydata_to_mesh
 def cubedsphere_cube(side_length, data=None) -> Cube:
     """Generate a cube defined on a cubed-sphere mesh for tests.
 
+    The data will be located on the faces of the mesh.
+
     Parameters
     ----------
     side_length : int
@@ -39,7 +52,7 @@ def cubedsphere_cube(side_length, data=None) -> Cube:
     Returns
     -------
     :class:`iris.cube.Cube`
-        Cube with a mesh created from a PyVista box representation.
+        Cube defined on the cubed-sphere mesh
 
     Important
     ---------
@@ -50,7 +63,8 @@ def cubedsphere_cube(side_length, data=None) -> Cube:
 
     See Also
     --------
-    `PyVista Box <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.box>`_
+    :func:`cubedsphere_mesh`
+       For details on how the underlying mesh is generated.
 
     """
     mesh = cubedsphere_mesh(side_length)
@@ -76,7 +90,35 @@ def cubedsphere_mesh(side_length) -> Mesh:
     Returns
     -------
     :class:`iris.experimental.ugrid.Mesh`
-        Mesh created from a PyVista box representation.
+        The cubed-sphere mesh
+
+    Notes
+    -----
+    The procedure used to generate the mesh is to start with a cube
+    (the geometric solid, not the iris object), with each
+    face subdivided into equal sized squares. The 3D cartesian vectors of each
+    node and cell centre are projected onto a unit sphere and converted to
+    latitude-longitude coordinates.
+
+    The domain of the longitude coordinate is [-180, 180].
+
+    The cubed-sphere is oriented as follows:
+
+    ============  ===========  ================  =================
+    Panel number  Orientation  Central latitude  Central longitude
+    ============  ===========  ================  =================
+    0             -x           0                 180
+    1             +x           0                 0
+    2             -y           0                 -90
+    3             +y           0                 90
+    4             -z           -90               NA
+    5             +z           90                NA
+    ============  ===========  ================  =================
+
+    The mesh contains the following connectivities:
+
+    * ``face_face_connectivity``
+    * ``face_node_connectivity``
 
     Important
     ---------
@@ -88,6 +130,8 @@ def cubedsphere_mesh(side_length) -> Mesh:
     See Also
     --------
     `PyVista Box <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.box>`_
+       The object used to define the starting 3D cube which is projected to the
+       unit sphere
 
     """
     if side_length < 1:
@@ -107,6 +151,8 @@ def cubedsphere_mesh(side_length) -> Mesh:
 def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
     """Generate a cube defined on a single cubed-sphere panel mesh for tests.
 
+    The data will be located on the faces of the mesh.
+
     Parameters
     ----------
     side_length : int
@@ -121,7 +167,7 @@ def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
     Returns
     -------
     :class:`iris.cube.Cube`
-        Cube with a mesh created from a PyVista plane representation.
+        Cube defined on a single panel mesh
 
     Important
     ---------
@@ -132,7 +178,8 @@ def panel_cube(side_length, centre_lat=0.0, centre_lon=0.0, data=None) -> Cube:
 
     See Also
     --------
-    `PyVista Plane <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.plane>`_
+    :func:`panel_mesh`
+       For details on how the underlying mesh is generated.
 
     """
     mesh = panel_mesh(side_length, centre_lat, centre_lon)
@@ -155,7 +202,14 @@ def panel_mesh(side_length, centre_lat=0.0, centre_lon=0.0) -> Mesh:
     Returns
     -------
     :class:`iris.experimental.ugrid.Mesh`
-        Mesh created from a PyVista plane representation.
+        The panel mesh.
+
+    Notes
+    -----
+    The procedure used to generate the mesh is to start with a plane subdivided
+    into equal sizes squares. The 3D cartesian vectors of each
+    node and cell centre are projected onto a unit sphere and converted to
+    latitude-longitude coordinates.
 
     Important
     ---------
@@ -167,6 +221,8 @@ def panel_mesh(side_length, centre_lat=0.0, centre_lon=0.0) -> Mesh:
     See Also
     --------
     `PyVista Plane <https://docs.pyvista.org/api/utilities/_autosummary/pyvista.plane>`_
+       The object used to define the starting plane which is projected to the
+       unit sphere
 
     """
     if side_length < 1:
