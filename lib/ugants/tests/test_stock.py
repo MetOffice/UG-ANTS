@@ -194,13 +194,6 @@ class TestCubedsphereCube(CommonCube):
         return (6 * side_length**2,)
 
     @pytest.mark.parametrize("side_length", [1, 2, 4])
-    def test_has_panel_number_coord(self, side_length):
-        cube = ugants.tests.stock.cubedsphere_cube(side_length)
-        panel_number = cube.coord("panel_number")
-        assert panel_number is not None
-        assert panel_number.points.shape == (6 * side_length**2,)
-
-    @pytest.mark.parametrize("side_length", [1, 2, 4])
     def test_panel_number_values(self, side_length):
         cube = ugants.tests.stock.cubedsphere_cube(side_length)
         panel_number = cube.coord("panel_number").points
