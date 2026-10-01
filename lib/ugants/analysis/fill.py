@@ -8,7 +8,7 @@ import abc
 import warnings
 
 import numpy as np
-from iris.cube import Cube
+from iris.cube import Cube, CubeList
 from pykdtree.kdtree import KDTree
 
 from ugants.analysis.coord_transforms import convert_to_cartesian
@@ -63,30 +63,40 @@ class FillABC(abc.ABC):
         ----------
         source
             UGrid cube with missing data to be filled, identified by either NaN or masked data.
+            This cube must contain a single dimension, corresponding to the horizontal mesh.
         target_mask
             Target mask to be applied to constrain the search, by default None.
             Cells that are ``True`` in the target mask are considered invalid fill candidates.
         """  # noqa: E501
-        if (target_mask is not None) and (source.mesh != target_mask.mesh):
-            raise ValueError("Source and target mask have different meshes")
-
+        self._validate_source_cube(source)
         self.source = convert_nan_to_masked(source)
 
         self.target_mask = None
         if target_mask is not None:
+            if source.mesh != target_mask.mesh:
+                raise ValueError("Source and target mask have different meshes")
             self._validate_target_mask(target_mask)
             self.target_mask = target_mask.copy(target_mask.data.astype(bool))
 
-        self.indices_to_be_filled: np.ndarray
-        self.identify_cells_to_fill()
-
-        self.indices_to_fill_from: np.ndarray
-        self.identify_valid_fill_cells()
+        self.indices_to_be_filled = self.identify_cells_to_fill(
+            self.source, self.target_mask
+        )
+        self.indices_to_fill_from = self.identify_valid_fill_cells(
+            self.source, self.target_mask
+        )
 
         self.calculate_fill_lookup()
 
     @staticmethod
-    def _validate_target_mask(target_mask):
+    def _validate_source_cube(source: Cube):
+        if source.ndim != 1:
+            raise ValueError(
+                "The source cube must have 1 dimension, "
+                f"but the provided cube has {source.ndim}."
+            )
+
+    @staticmethod
+    def _validate_target_mask(target_mask: Cube):
         # Only integer or boolean dtypes allowed in target mask
         if (dtype := target_mask.data.dtype).kind not in ("i", "b"):
             raise TypeError(
@@ -125,42 +135,61 @@ class FillABC(abc.ABC):
         """
         pass
 
-    def identify_cells_to_fill(self):
-        """Identify cells within :attr:`source` cube to be filled.
+    @staticmethod
+    def identify_cells_to_fill(source: Cube, target_mask: Cube):
+        """Identify which cells within a source cube need to be filled.
 
-        Sets the :attr:`indices_to_be_filled` attribute.
+        A cell requires filling if it is masked in the source and is not present in the
+        target mask.
+
+        Parameters
+        ----------
+        source: iris.cube.Cube
+            Source cube with masked data to be filled.
+        target_mask: iris.cube.Cube | None
+            Cube with boolean data representing the target mask. If None, all masked
+            cells in the source will be identified as needing filling.
 
         Returns
         -------
-        None
-            In-place operation.
+        numpy.ndarray
+            Boolean array identifying which cells need filling.
         """
-        missing_in_source = np.ma.getmaskarray(self.source.data)
-        if self.target_mask is not None:
+        missing_in_source = np.ma.getmaskarray(source.data)
+        if target_mask is not None:
             # find points which are masked in source and not 1 in target_mask
-            not_target_mask = ~self.target_mask.data
+            not_target_mask = ~target_mask.data
             search_mask = missing_in_source & not_target_mask
         else:
             search_mask = missing_in_source
 
         if np.all(~search_mask):
             warnings.warn("No cells in the source cube require filling.", stacklevel=1)
-        self.indices_to_be_filled = search_mask
-        return None
+        return search_mask
 
-    def identify_valid_fill_cells(self):
-        """Identify cells within :attr:`source` cube which are valid fill candidates.
+    @staticmethod
+    def identify_valid_fill_cells(source: Cube, target_mask: Cube):
+        """Identify which cells within a source cube are valid fill candidates.
 
-        Sets the :attr:`indices_to_fill_from` attribute.
+        A cell is a valid fill candidate if it is not masked in the source and not
+        present in the target mask.
+
+        Parameters
+        ----------
+        source: iris.cube.Cube
+            Source cube with masked data to be filled.
+        target_mask: iris.cube.Cube | None
+            Cube with boolean data representing the target mask. If None, all non-masked
+            cells in the source will be identified as valid fill candidates.
 
         Returns
         -------
-        None
-            In-place operation.
+        numpy.ndarray
+            Boolean array identifying which cells are valid fill candidates.
         """
-        valid_in_source = ~np.ma.getmaskarray(self.source.data)
-        if self.target_mask is not None:
-            valid_in_target = ~self.target_mask.data
+        valid_in_source = ~np.ma.getmaskarray(source.data)
+        if target_mask is not None:
+            valid_in_target = ~target_mask.data
             if np.all(valid_in_target):
                 warnings.warn(
                     "All target mask data is unmasked, target mask has no effect.",
@@ -172,8 +201,7 @@ class FillABC(abc.ABC):
 
         if np.all(~valid_mask):
             raise ValueError("No valid fill candidates in source cube.")
-        self.indices_to_fill_from = valid_mask
-        return None
+        return valid_mask
 
     def __repr__(self) -> str:
         """Provide a string representation of the class instance."""
@@ -208,7 +236,6 @@ class KDTreeFill(FillABC):
         self.points_to_fill_from = point_cloud[self.indices_to_fill_from]
         self.kdtree = KDTree(self.points_to_fill_from)
         _, self.nearest_neighbour_indices = self.kdtree.query(self.points_to_be_filled)
-        return None
 
     def __call__(self, cube: Cube) -> Cube:
         """
@@ -220,28 +247,90 @@ class KDTreeFill(FillABC):
         Parameters
         ----------
         cube
-            Cube with missing points to be filled.
+            Cube with missing points to be filled. The cube must contain one dimension
+            only, corresponding to the horizontal mesh. It must also have missing data
+            consistent with that of the source cube used to instantiate the KDTreeFill
+            object.
 
         Returns
         -------
         :class:`iris.cube.Cube`
             Cube with missing points filled with data from nearest neighbour.
         """
+        self._validate_source_cube(cube)
+
         if cube.mesh != self.source.mesh:
             raise ValueError("Provided cube and source cube have different meshes")
 
-        target = convert_nan_to_masked(cube)
+        cube = convert_nan_to_masked(cube)
+
+        # Ensure masks are consistent between provided cube and original source cube
+        source_mask = np.ma.getmaskarray(self.source.data)
+        cube_mask = np.ma.getmaskarray(cube.data)
+        if not np.array_equal(source_mask, cube_mask):
+            raise ValueError(
+                "Cannot fill the provided cube as it does not have the same missing "
+                "data as the source."
+            )
 
         # NOTE: nearest_neighbour_indices references the points_to_fill_from array,
         # NOT the data array of the full cube
-        valid_fill_data = target.data[self.indices_to_fill_from]
-        target.data[self.indices_to_be_filled] = valid_fill_data[
+        valid_fill_data = cube.data[self.indices_to_fill_from]
+        cube.data[self.indices_to_be_filled] = valid_fill_data[
             self.nearest_neighbour_indices
         ]
 
         if self.target_mask is not None:
-            target.data.mask = self.target_mask.data
-        return target
+            cube.data.mask = self.target_mask.data
+        return cube
+
+
+def fill_cube(cube: Cube, target_mask: Cube = None, *, method="kdtree", strict=True):
+    """Fill all missing data in a cube, and apply a mask.
+
+    Parameters
+    ----------
+    cube: iris.cube.Cube
+        Cube with missing (masked or NaN) data to be filled.
+    target_mask: iris.cube.Cube
+        Mask to apply to cube and constrain the search. If None (the default), then all
+        missing points will be filled and no mask will be applied.
+    method: str
+        The search algorithm to be used. Currently only "kdtree" is supported,
+        which uses the :class:`KDTreeFill` class.
+    strict: bool
+        Whether to fill consistently across all non-horizontal dimensions. If True (the
+        default), the same filler is used for all layers. This should be used if all
+        layers have missing data at the same horizontal locations. If False, each layer
+        will be filled independently.
+
+    Returns
+    -------
+    iris.cube.Cube
+    """
+    fill_methods = {"kdtree": KDTreeFill}
+    try:
+        fill_class = fill_methods[method.lower()]
+    except KeyError as e:
+        raise ValueError(
+            f"Unrecognised fill method: '{method}'. "
+            f"Supported fill methods are {tuple(fill_methods.keys())}"
+        ) from e
+
+    # Split cube into slices: one cube per non-horizontal layer
+    cube_slices = CubeList(cube.slices(cube.mesh_dim()))
+    if strict:
+        # use same filler for all slices
+        filler = fill_class(cube_slices[0], target_mask)
+        filled_cube_slices = CubeList(filler(cube) for cube in cube_slices)
+        filled_cube = filled_cube_slices.merge_cube()
+    else:
+        # calculate new filler for each slice
+        filled_cube_slices = CubeList(
+            fill_class(cube, target_mask)(cube) for cube in cube_slices
+        )
+        filled_cube = filled_cube_slices.merge_cube()
+    return filled_cube
 
 
 def flood_fill(cube: Cube, seed_point: int, fill_value: float):
