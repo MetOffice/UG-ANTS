@@ -6,14 +6,12 @@
 import pytest
 from iris.cube import CubeList
 
-from ugants.io import load
 from ugants.regrid.applications import (
     MeshToGridRegrid,
     RecombineGridBands,
     SplitMeshToGridByLatitude,
 )
-from ugants.tests import get_data_path
-from ugants.tests.stock import regular_grid_global_cube
+from ugants.tests.stock import cubedsphere_cube, regular_grid_global_cube
 
 
 def _standard_regrid(source, target_grid, scheme):
@@ -52,7 +50,7 @@ class TestConsistentResults:
     @pytest.mark.parametrize("scheme", ["conservative", "bilinear", "nearest"])
     def test_no_tolerance(self, scheme, n_bands):
         """Test that results are consistent when no tolerance is provided."""
-        sources = load.ugrid(get_data_path("data_C4.nc"), "sample_data")
+        sources = CubeList([cubedsphere_cube(12)])
         for source in sources:
             source.attributes["history"] = "foo"
         target_grid = CubeList([regular_grid_global_cube(144, 192)])

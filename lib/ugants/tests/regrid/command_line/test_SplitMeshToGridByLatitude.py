@@ -7,20 +7,21 @@ from unittest import mock
 import numpy as np
 import pytest
 
-import ugants
 from ugants.regrid.applications import SplitMeshToGridByLatitude
+from ugants.tests.stock import cubedsphere_cube, regular_grid_global_cube
+from ugants.utils.cube import as_cubelist
 
 
 @pytest.fixture()
 def sample_cubelist():
-    return ugants.io.load.ugrid(
-        ugants.tests.get_data_path("data_C4.nc"), constraints="sample_data"
-    )
+    cube = cubedsphere_cube(4)
+    return as_cubelist(cube)
 
 
 @pytest.fixture()
 def target_cubelist():
-    return ugants.io.load.cf(ugants.tests.get_data_path("non_ugrid_data.nc"))
+    cube = regular_grid_global_cube(144, 192)
+    return as_cubelist(cube)
 
 
 def _latitude_range(cube):

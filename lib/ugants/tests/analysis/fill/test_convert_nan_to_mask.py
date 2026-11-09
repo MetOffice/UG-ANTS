@@ -5,13 +5,11 @@
 
 import numpy as np
 from ugants.analysis.fill import convert_nan_to_masked
-from ugants.io import load
-from ugants.tests import get_data_path
+from ugants.tests.stock import cubedsphere_cube
 
 
 def test_no_nan_no_mask():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
 
     actual = convert_nan_to_masked(sample_data)
 
@@ -19,8 +17,7 @@ def test_no_nan_no_mask():
 
 
 def test_no_nan_one_masked_cell():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
     sample_data.data[0] = np.ma.masked
 
     actual = convert_nan_to_masked(sample_data)
@@ -29,8 +26,7 @@ def test_no_nan_one_masked_cell():
 
 
 def test_one_nan_cell_no_mask():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
     sample_data.data[0] = np.nan
 
     expected = sample_data.copy()
@@ -42,8 +38,7 @@ def test_one_nan_cell_no_mask():
 
 
 def test_one_nan_one_masked():
-    data_C4 = load.ugrid(get_data_path("data_C4.nc"))
-    sample_data = data_C4.extract_cube("sample_data")
+    sample_data = cubedsphere_cube(4)
     sample_data.data[0] = np.ma.masked
     sample_data.data[1] = np.nan
 

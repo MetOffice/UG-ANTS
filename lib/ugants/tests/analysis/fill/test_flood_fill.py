@@ -5,18 +5,15 @@
 """Tests for the :func:`ugants.analysis.fill.flood_fill function."""
 
 import pytest
-import ugants.tests
 from iris.coords import DimCoord
 from iris.cube import CubeList
 from ugants.analysis.fill import flood_fill
-from ugants.io import load
+from ugants.tests.stock import cubedsphere_cube
 
 
 @pytest.fixture()
 def source():
-    source = load.ugrid(ugants.tests.get_data_path("data_C4.nc")).extract_cube(
-        "sample_data"
-    )
+    source = cubedsphere_cube(4)
     return source
 
 
@@ -92,7 +89,7 @@ def test_single_panel_fill(source):
     # Key:
     # +---+
     # |IN |<-- Cell index
-    # | D |<-- Cell data value pre-fill
+    # | D |<-- Cell data value post-fill
     # +---+
     #
     # +---+---+---+---+
@@ -134,28 +131,28 @@ def test_multi_panel_fill(source):
     # | D |<-- Cell data value pre-fill
     # +---+
     #                 +---+---+---+---+
-    #                 |67 |71 |75 |79 |
+    #                 |35 |39 |43 |47 |
     #                 | 0 | 0 | 0 | 1 |
     #                 +---+---+---+---+
-    #                 |66 |70 |74 |78 |
+    #                 |34 |38 |42 |46 |
     #                 | 0 | 0 | 0 | 1 |
     #                 +---+---+---+---+
-    #                 |65 |69 |73 |77 |
+    #                 |33 |37 |41 |45 |
     #                 | 1 | 1 | 1 | 0 |
     #                 +---+---+---+---+
-    #                 |64 |68 |72 |76 |
+    #                 |32 |36 |40 |44 |
     #                 | 0 | 0 | 0 | 1 |
     # +---+---+---+---+---+---+---+---+
-    # |48 |49 |50 |51 |0 X|1  |2  |3  |
+    # |64 |65 |66 |67 |0 X|1  |2  |3  |
     # | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
     # +---+---+---+---+---+---+---+---+
-    # |52 |53 |54 |55 |4  |5  |6  |7  |
+    # |68 |69 |70 |71 |4  |5  |6  |7  |
     # | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |56 |57 |58 |59 |8  |9  |10 |11 |
+    # |72 |73 |74 |75 |8  |9  |10 |11 |
     # | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |60 |61 |62 |63 |12 |13 |14 |15 |
+    # |76 |77 |78 |79 |12 |13 |14 |15 |
     # | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
     #
@@ -167,28 +164,28 @@ def test_multi_panel_fill(source):
     # | D |<-- Cell data value post-fill
     # +---+
     #                 +---+---+---+---+
-    #                 |67 |71 |75 |79 |
+    #                 |35 |39 |43 |47 |
     #                 | 0 | 0 | 0 | 1 |
     #                 +---+---+---+---+
-    #                 |66 |70 |74 |78 |
+    #                 |34 |38 |42 |46 |
     #                 | 0 | 0 | 0 | 1 |
     #                 +---+---+---+---+
-    #                 |65 |69 |73 |77 |
+    #                 |33 |37 |41 |45 |
     #                 | 2 | 2 | 2 | 0 |
     #                 +---+---+---+---+
-    #                 |64 |68 |72 |76 |
+    #                 |32 |36 |40 |44 |
     #                 | 0 | 0 | 0 | 2 |
     # +---+---+---+---+---+---+---+---+
-    # |48 |49 |50 |51 |0 X|1  |2  |3  |
+    # |64 |65 |66 |67 |0 X|1  |2  |3  |
     # | 1 | 0 | 2 | 2 | 2 | 2 | 2 | 2 |
     # +---+---+---+---+---+---+---+---+
-    # |52 |53 |54 |55 |4  |5  |6  |7  |
+    # |68 |69 |70 |71 |4  |5  |6  |7  |
     # | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |56 |57 |58 |59 |8  |9  |10 |11 |
+    # |72 |73 |74 |75 |8  |9  |10 |11 |
     # | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |60 |61 |62 |63 |12 |13 |14 |15 |
+    # |76 |77 |78 |79 |12 |13 |14 |15 |
     # | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
 
@@ -197,11 +194,11 @@ def test_multi_panel_fill(source):
 
     # Set the points following the
     # pattern outlined in diagrams above
-    source.data[[0, 1, 2, 3, 5, 48, 50, 51, 65, 69, 73, 76, 78, 79]] = 1
+    source.data[[0, 1, 2, 3, 5, 33, 37, 41, 44, 46, 47, 64, 66, 67]] = 1
 
     fill_value = 2
     expected_filled = source.copy()
-    expected_filled.data[[0, 1, 2, 3, 5, 50, 51, 65, 69, 73, 76]] = fill_value
+    expected_filled.data[[0, 1, 2, 3, 5, 33, 37, 41, 44, 66, 67]] = fill_value
 
     actual_filled = flood_fill(source, 5, fill_value)
     assert actual_filled == expected_filled

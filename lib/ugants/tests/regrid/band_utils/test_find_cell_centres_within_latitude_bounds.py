@@ -6,20 +6,14 @@
 import numpy as np
 import pytest
 
-from ugants.io.load import ugrid as load_ugrid
-from ugants.regrid.band_utils import (
-    find_cell_centres_within_latitude_bounds,
-    mesh_to_cube,
-)
-from ugants.tests import get_data_path
-from ugants.tests.stock import regular_lat_lon_mesh
+from ugants.regrid.band_utils import find_cell_centres_within_latitude_bounds
+from ugants.tests.stock import cubedsphere_cube, regular_lat_lon_mesh
+from ugants.utils.cube import mesh_to_cube
 
 
 @pytest.fixture()
 def c4_cube():
-    input_filepath = get_data_path("data_C4.nc")
-    cubelist = load_ugrid(input_filepath, "sample_data")
-    cube = cubelist[0]
+    cube = cubedsphere_cube(4)
     return cube
 
 

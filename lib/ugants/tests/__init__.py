@@ -61,7 +61,7 @@ def add_axis(original_cube, name, axis=""):
         Cube to add a new axis to
     name : str
         Name of coordinate associated with new axis
-    axis : str, optional
+    axis : :obj:`str`, optional
         Axis type, either "Z" or "T".
 
     Returns

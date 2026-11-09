@@ -14,6 +14,8 @@ from pathlib import Path
 import dask
 import iris.cube
 import numpy as np
+from iris.cube import Cube
+from iris.experimental.ugrid import Mesh
 
 from ugants.exceptions import PROVISIONAL_WARNING_MESSAGE, ProvisionalWarning
 
@@ -397,3 +399,39 @@ def _expand_cube_mask(cube):
                 cube_core_data, mask=np.zeros(cube_core_data.shape, dtype=bool)
             )
     return
+
+
+def mesh_to_cube(mesh: Mesh, data=None, dtype=np.float64) -> Cube:
+    """Convert an iris mesh into a cube with data defined on the faces.
+
+    Parameters
+    ----------
+    mesh: iris.experimental.ugrid.Mesh
+        The mesh onto which the data will be located
+    data: :class:`numpy.ndarray`, optional
+        Optional data payload to attach to the cube. If not provided, synthetic
+        data will be generated using :func:`numpy.ma.masked_all`.
+        Note: the data array must be of shape (n_faces,), where n_faces is the
+        number of faces on the mesh
+    dtype: :class:`numpy.dtype`, optional
+        The data type of the data array of the cube. Note: this will only be used
+        if data = None, otherwise the data type of the provided array is used.
+
+    Returns
+    -------
+    :class:`iris.cube.Cube`
+        The providied mesh as an :class:`iris.cube.Cube`.
+    """
+    location = "face"
+    n_faces = mesh.face_coords.face_x.shape[0]
+    if data is not None:
+        data = np.ma.asarray(data)
+    if data is None:
+        data = np.ma.masked_all(n_faces, dtype=dtype)
+    mesh_coord_x, mesh_coord_y = mesh.to_MeshCoords(location)
+    cube = iris.cube.Cube(
+        data=data,
+        long_name=f"{location}_data",
+        aux_coords_and_dims=[(mesh_coord_x, 0), (mesh_coord_y, 0)],
+    )
+    return cube

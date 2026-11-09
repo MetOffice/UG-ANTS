@@ -27,7 +27,7 @@ from ugants.io.save import (
     ugrid as save_ugrid,
 )
 from ugants.regrid import band_utils
-from ugants.utils.cube import as_cubelist
+from ugants.utils.cube import as_cubelist, mesh_to_cube
 
 
 class Regrid(Application):
@@ -314,7 +314,7 @@ class SplitGridToMeshByLatitude(Application):
             stop=target_max_latitude,
             n_bands=self.number_of_bands,
         )
-        self.mesh_mapping_cube = band_utils.mesh_to_cube(self.target_mesh)
+        self.mesh_mapping_cube = mesh_to_cube(self.target_mesh)
 
         # A boolean array of shape (n_bands, n_faces)
         mesh_indices_per_band = np.array(

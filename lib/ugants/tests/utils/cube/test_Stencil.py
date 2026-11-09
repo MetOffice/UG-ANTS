@@ -4,41 +4,40 @@
 # See LICENSE.txt in the root of the repository for full licensing details.
 import numpy as np
 import pytest
-from ugants.io.load import ugrid
-from ugants.tests import get_data_path
+from ugants.tests.stock import cubedsphere_cube
 from ugants.utils.cube import Stencil
 
 
 @pytest.fixture()
 def source():
-    return ugrid(get_data_path("data_C4.nc")).extract_cube("sample_data")
+    return cubedsphere_cube(4)
 
 
 @pytest.mark.parametrize("central_cell_index", [5, -91])
 class TestMidPanel:
     #                 +---+---+---+---+
-    #                 |67 |71 |75 |79 |
+    #                 |35 |39 |43 |47 |
     #                 | 0 | 0 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |66 |70 |74 |78 |
+    #                 |34 |38 |42 |46 |
     #                 | 0 | 0 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |65 |69 |73 |77 |
+    #                 |33 |37 |41 |45 |
     #                 | 0 | 0 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |64 |68 |72 |76 |
+    #                 |32 |36 |40 |44 |
     #                 | 3 | 3 | 3 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |48 |49 |50 |51 |0  |1  |2  |3  |
+    # |64 |65 |66 |67 |0  |1  |2  |3  |
     # | 0 | 0 | 0 | 3 | 2 | 1 | 2 | 3 |
     # +---+---+---+---+---+---+---+---+
-    # |52 |53 |54 |55 |4  |5  |6  |7  |
+    # |68 |69 |70 |71 |4  |5  |6  |7  |
     # | 0 | 0 | 0 | 3 | 1 | 0 | 1 | 3 |
     # +---+---+---+---+---+---+---+---+
-    # |56 |57 |58 |59 |8  |9  |10 |11 |
+    # |72 |73 |74 |75 |8  |9  |10 |11 |
     # | 0 | 0 | 0 | 3 | 2 | 1 | 2 | 3 |
     # +---+---+---+---+---+---+---+---+
-    # |60 |61 |62 |63 |12 |13 |14 |15 |
+    # |76 |77 |78 |79 |12 |13 |14 |15 |
     # | 0 | 0 | 0 | 0 | 3 | 3 | 3 | 0 |
     # +---+---+---+---+---+---+---+---+
     def test_immediate_neigbours(self, central_cell_index, source):
@@ -58,7 +57,7 @@ class TestMidPanel:
 
     def test_third_iteration(self, central_cell_index, source):
         expected = np.array(
-            [64, 68, 72, 51, 0, 1, 2, 3, 55, 4, 5, 6, 7, 59, 8, 9, 10, 11, 12, 13, 14]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 32, 36, 40, 67, 71, 75]
         )
         expected.sort()
         stencil = Stencil(source, iterations=3)
@@ -71,32 +70,32 @@ class TestMidPanel:
 @pytest.mark.parametrize("central_cell_index", [0, -96])
 class TestPanelCorner:
     #                 +---+---+---+---+
-    #                 |67 |71 |75 |79 |
+    #                 |35 |39 |43 |47 |
     #                 | 0 | 0 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |66 |70 |74 |78 |
+    #                 |34 |38 |42 |46 |
     #                 | 0 | 0 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |65 |69 |73 |77 |
+    #                 |33 |37 |41 |45 |
     #                 | 3 | 3 | 0 | 0 |
     #                 +---+---+---+---+
-    #                 |64 |68 |72 |76 |
+    #                 |32 |36 |40 |44 |
     #                 | 1 | 2 | 3 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |48 |49 |50 |51 |0  |1  |2  |3  |
+    # |64 |65 |66 |67 |0  |1  |2  |3  |
     # | 0 | 0 | 3 | 1 | 0 | 1 | 3 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |52 |53 |54 |55 |4  |5  |6  |7  |
+    # |68 |69 |70 |71 |4  |5  |6  |7  |
     # | 0 | 0 | 3 | 2 | 1 | 2 | 3 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |56 |57 |58 |59 |8  |9  |10 |11 |
+    # |72 |73 |74 |75 |8  |9  |10 |11 |
     # | 0 | 0 | 0 | 3 | 3 | 3 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
-    # |60 |61 |62 |63 |12 |13 |14 |15 |
+    # |76 |77 |78 |79 |12 |13 |14 |15 |
     # | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
     # +---+---+---+---+---+---+---+---+
     def test_immediate_neighbours(self, central_cell_index, source):
-        expected = np.array([64, 51, 0, 1, 4])
+        expected = np.array([0, 1, 4, 32, 67])
         expected.sort()
         stencil = Stencil(source, iterations=1)
         actual = stencil[central_cell_index]
@@ -104,7 +103,7 @@ class TestPanelCorner:
         np.testing.assert_array_equal(actual, expected)
 
     def test_extended_neighbours(self, central_cell_index, source):
-        expected = np.array([64, 68, 51, 0, 1, 55, 4, 5])
+        expected = np.array([0, 1, 4, 5, 32, 36, 67, 71])
         expected.sort()
         stencil = Stencil(source, iterations=2)
         central_cell_index = 0
@@ -114,7 +113,7 @@ class TestPanelCorner:
 
     def test_third_iteration(self, central_cell_index, source):
         expected = np.array(
-            [65, 69, 64, 68, 72, 50, 51, 0, 1, 2, 54, 55, 4, 5, 6, 59, 8, 9]
+            [0, 1, 4, 5, 32, 36, 67, 71, 33, 37, 40, 66, 2, 70, 6, 75, 8, 9]
         )
         expected.sort()
         stencil = Stencil(source, iterations=3)
